@@ -21,3 +21,9 @@ ul
 	height: 100%;
 	border: 10px rgb(84, 130, 231) dashed;
 }
+
+.imgframe{ 
+	background:#ffffff;
+    padding:12px;
+    border:1px solid #999999; 
+}
