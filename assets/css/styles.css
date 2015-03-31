@@ -1,17 +1,23 @@
-.timeline-circle{
-	position: relative;
-	margin-top: 0px;
-	top: 15px;
-	font-size: 25px;
-	color: #fff;
-	
+*, body{
+	width: 80%;
+	height: 100%;
 }
 
-#circles i{
-	 color: orange ; 
-}
 
 ul
 {
     list-style-type: none;
+}
+
+
+
+.circles i{
+	 color: orange ; 
+}
+
+
+.pic-frame{
+	width: 100%;
+	height: 100%;
+	border: 10px rgb(84, 130, 231) dashed;
 }
