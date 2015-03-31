@@ -17,7 +17,7 @@
 		document.write("I didn't saw knockout around"); return;
 	}
 
-	document.write("all goes well")); return;
+	document.write("all goes well"); return;
 
 	// bind a new instance of our view model to the page
 	/*var viewModel = new ViewModel(prescriptions || []);
