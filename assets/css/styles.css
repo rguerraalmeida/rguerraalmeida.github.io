@@ -10,3 +10,8 @@
 #circles i{
 	 color: orange ; 
 }
+
+ul
+{
+    list-style-type: none;
+}
