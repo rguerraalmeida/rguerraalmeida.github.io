@@ -5,6 +5,11 @@
 	var ENTER_KEY = 13;
 	var ESCAPE_KEY = 27;
 
+	var dropbox_App_key = 'ilj3pkd8a70vf5f';
+
+	var dropboxIsAuthenticated = ko.observable(false);
+	var client = new Dropbox.Client({key: dropbox_App_key});
+
 	// A factory function we can use to create binding handlers for specific
 	// keycodes.
 	function keyhandlerBindingFactory(keyCode) {
