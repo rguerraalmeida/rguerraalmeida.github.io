@@ -1,3 +1,4 @@
-*, body{
-
+body{
+	background:url('../img/Paper-Grunge-Background-129.jpg');
+	background-attachment: fixed;
 }
