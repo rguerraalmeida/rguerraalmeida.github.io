@@ -50,13 +50,106 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Huh baby, yeah baby</title>
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
 </head>
 <body>
-<h1>I like it in here.</h1>
-<p>I'm hosted on GitHub Pages.</p>
+	<h1>I like it in here.</h1>
+	<p>I'm hosted on GitHub Pages.</p>
+
+	<button id="button-login" data-bind="visible: dropboxIsAuthenticated, click: doLogin">Login</button>
+
+	<section id="todoapp" style="display:none">
+			<header id="header">
+				<h1>todos</h1>
+				<input id="new-todo" data-bind="value: current, valueUpdate: 'afterkeydown', enterKey: add" placeholder="What needs to be done?" autofocus>
+			</header>
+			<section id="main" data-bind="visible: prescriptions().length">
+				<input id="toggle-all" data-bind="checked: allCompleted" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul id="todo-list" data-bind="foreach: filteredTodos">
+					<li data-bind="css: { completed: completed, editing: editing }">
+						<div class="view">
+							<input class="toggle" data-bind="checked: completed" type="checkbox">
+							<label data-bind="text: title, event: { dblclick: $root.editItem }"></label>
+							<button class="destroy" data-bind="click: $root.remove"></button>
+						</div>
+						<input class="edit" data-bind="value: name, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.stopEditing }">
+					</li>
+				</ul>
+			</section>
+			<!-- <footer id="footer" data-bind="visible: completedCount() || remainingCount()"> -->
+			<footer id="footer" data-bind="visible: completedCount() || remainingCount()">
+				<!-- <span id="todo-count">
+					<strong data-bind="text: remainingCount">0</strong>
+					<span data-bind="text: getLabel(remainingCount)"></span> left
+				</span> -->
+				<ul id="todo-count">
+					<li>
+						<span id="all-count">
+							<strong data-bind="text: allCount">0</strong>
+							<span data-bind="text: getLabel(allCount)"></span> left
+						</span>
+					</li>
+					<li>
+						<span id="jejum-count">
+							<strong data-bind="text: jejumCount">0</strong>
+							<span data-bind="text: getLabel(jejumCount)"></span> left
+						</span>
+					</li>
+					<li>
+						<span id="peqalmoco-count">
+							<strong data-bind="text: peqalmocoCount">0</strong>
+							<span data-bind="text: getLabel(peqalmocoCount)"></span> left
+						</span>
+					</li>
+					<li>
+						<span id="almoco-count">
+							<strong data-bind="text: almocoCount">0</strong>
+							<span data-bind="text: getLabel(almocoCount)"></span> left
+						</span>
+					</li>
+					<li>
+						<span id="jantar-count">
+							<strong data-bind="text: jantarCount">0</strong>
+							<span data-bind="text: getLabel(jantarCount)"></span> left
+						</span>
+					</li>
+				</ul>
+				<ul id="filters">
+					<li>
+						<a data-bind="css: { selected: showMode() == 'all' }" href="#/all">Todos</a>
+					</li>
+					<li>
+						<a data-bind="css: { selected: showMode() == 'jejum' }" href="#/jejum">Jejum</a>
+					</li>
+					<li>
+						<a data-bind="css: { selected: showMode() == 'peqalmoco' }" href="#/peqalmoco">Pequeno Almoço</a>
+					</li>
+					<li>
+						<a data-bind="css: { selected: showMode() == 'almoco' }" href="#/almoco">Almoço</a>
+					</li>
+					<li>
+						<a data-bind="css: { selected: showMode() == 'jantar' }" href="#/jantar">Jantar</a>
+					</li>
+				</ul>
+				<!-- <button id="clear-completed" data-bind="visible: completedCount, click: removeCompleted">
+					Clear completed (<span data-bind="text: completedCount"></span>)
+					Clear completed (<span data-bind="text: completedCount"></span>)
+					Clear completed (<span data-bind="text: completedCount"></span>)
+					Clear completed (<span data-bind="text: completedCount"></span>)
+				</button> -->
+			</footer>
+		</section>
+		<footer id="info">
+			<p>Written by r.guerra.almeida@gmail.com</p>
+			<p>Adapted from the <a href="http://todomvc.com">TodoMVC</a> knockout.js sample written by <a href="https://github.com/ashish01/knockoutjs-todos">Ashish Sharma</a> and <a href="http://knockmeout.net">Ryan Niemeyer</a>     </p>
+		</footer>
+
+
+		<h3>Developed by r.guerra.almeida@gmail.com</h3>
+
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Director/1.2.8/director.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
