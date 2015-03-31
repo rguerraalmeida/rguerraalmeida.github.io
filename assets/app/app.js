@@ -166,7 +166,7 @@
 				item.timeofday(trimmedtimeofday);
 			}
 
-			if (!trimmeddci) && (!trimmedname) && (!trimmedform) && (!trimmeddose) && (!trimmedtimeofday){
+			if (!trimmeddci && !trimmedname && !trimmedform && !trimmeddose && !trimmedtimeofday){
 				this.remove(item);
 			}
 		}.bind(this);
