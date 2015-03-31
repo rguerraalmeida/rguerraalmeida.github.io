@@ -6,15 +6,15 @@
 	var ESCAPE_KEY = 27;
 
 	if (!window.Router){
-		document.write("I didn't saw director around")); return;
+		document.write("I didn't saw director around"); return;
 	}
 
 	if (!window.jQuery){
-		document.write("I didn't saw jQuery around")); return;
+		document.write("I didn't saw jQuery around"); return;
 	}
 
 	if (!window.ko){
-		document.write("I didn't saw knockout around")); return;
+		document.write("I didn't saw knockout around"); return;
 	}
 
 	document.write("all goes well")); return;
