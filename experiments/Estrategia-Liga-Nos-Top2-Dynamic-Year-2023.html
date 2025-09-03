@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise da Simulação de Apostas - Liga NOS 23/24</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            color: #004d40;
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            gap: 20px;
+        }
+
+        .summary-card {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-card h3 {
+            margin-top: 0;
+            color: #388e3c;
+            font-size: 1.2em;
+        }
+
+        .summary-card p {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 5px 0 0;
+            color: #1b5e20;
+        }
+
+        .chart-container {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: #004d40;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #00796b;
+            color: white;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .status-ganhou {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .status-perdeu {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .summary {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Análise de Simulação de Apostas</h1>
+        <p>Estratégia: Apostas Múltiplas Dinâmicas na Liga NOS 2023/2024</p>
+    </header>
+
+    <div class="summary">
+        <div class="summary-card">
+            <h3>Lucro Total</h3>
+            <p>EUR 54.38</p>
+        </div>
+        <div class="summary-card">
+            <h3>Total Investido</h3>
+            <p>EUR 230.00</p>
+        </div>
+        <div class="summary-card">
+            <h3>Retorno Total</h3>
+            <p>EUR 284.38</p>
+        </div>
+        <div class="summary-card">
+            <h3>Taxa de Vitória</h3>
+            <p>73.91%</p>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Evolução do Lucro ao Longo da Época</h2>
+        <canvas id="profitChart"></canvas>
+    </div>
+
+    <h2>Detalhe de Cada Aposta</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Jornada</th>
+                <th>Aposta Múltipla</th>
+                <th>Odd</th>
+                <th>Resultado</th>
+                <th>Lucro/Prejuízo (EUR)</th>
+                <th>Lucro Acumulado (EUR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>2</td><td>Benfica(2)@1.08 x Sp Lisbon(3)@1.44 x Porto(4)@1.13</td><td>1.76</td><td class="status-ganhou">GANHOU</td><td>+7.60</td><td>7.60</td></tr>
+            <tr><td>3</td><td>Benfica(2)@1.29 x Sp Lisbon(3)@1.25 x Porto(4)@1.45</td><td>2.34</td><td class="status-ganhou">GANHOU</td><td>+13.40</td><td>21.00</td></tr>
+            <tr><td>4</td><td>Benfica(2)@1.2 x Sp Lisbon(3)@2.2 x Porto(4)@1.25</td><td>3.3</td><td class="status-perdeu">PERDEU</td><td>-10.00</td><td>11.00</td></tr>
+            <tr><td>5</td><td>Benfica(2)@1.33 x Sp Lisbon(3)@1.22 x Porto(4)@1.33</td><td>2.16</td><td class="status-ganhou">GANHOU</td><td>+11.60</td><td>22.60</td></tr>
+            <tr><td>6</td><td>Porto(2)@1.22 x Sp Lisbon(3)@1.2</td><td>1.46</td><td class="status-ganhou">GANHOU</td><td>+4.60</td><td>27.20</td></tr>
+            <tr><td>8</td><td>Sp Lisbon(2)@1.22 x Benfica(3)@1.25</td><td>1.52</td><td class="status-ganhou">GANHOU</td><td>+5.20</td><td>32.40</td></tr>
+            <tr><td>9</td><td>Benfica(2)@1.2 x Sp Lisbon(3)@1.45 x Porto(4)@1.45</td><td>2.52</td><td class="status-perdeu">PERDEU</td><td>-10.00</td><td>22.40</td></tr>
+            <tr><td>10</td><td>Sp Lisbon(2)@1.25 x Benfica(3)@1.29</td><td>1.61</td><td class="status-ganhou">GANHOU</td><td>+6.10</td><td>28.50</td></tr>
+            <tr><td>12</td><td>Sp Lisbon(2)@1.17 x Benfica(3)@1.45</td><td>1.7</td><td class="status-perdeu">PERDEU</td><td>-10.00</td><td>18.50</td></tr>
+            <tr><td>13</td><td>Sp Lisbon(2)@1.62 x Porto(3)@1.25</td><td>2.03</td><td class="status-perdeu">PERDEU</td><td>-10.00</td><td>8.50</td></tr>
+            <tr><td>15</td><td>Sp Lisbon(2)@1.33 x Benfica(3)@1.29</td><td>1.72</td><td class="status-ganhou">GANHOU</td><td>+7.20</td><td>15.70</td></tr>
+            <tr><td>16</td><td>Sp Lisbon(2)@1.25 x Benfica(3)@1.5</td><td>1.88</td><td class="status-ganhou">GANHOU</td><td>+8.80</td><td>24.50</td></tr>
+            <tr><td>17</td><td>Sp Lisbon(2)@1.25 x Benfica(3)@1.2</td><td>1.5</td><td class="status-ganhou">GANHOU</td><td>+5.00</td><td>29.50</td></tr>
+            <tr><td>18</td><td>Sp Lisbon(2)@1.36 x Benfica(3)@1.14</td><td>1.55</td><td class="status-ganhou">GANHOU</td><td>+5.50</td><td>35.00</td></tr>
+            <tr><td>19</td><td>Sp Lisbon(2)@1.2 x Benfica(3)@1.29</td><td>1.55</td><td class="status-ganhou">GANHOU</td><td>+5.50</td><td>40.50</td></tr>
+            <tr><td>21</td><td>Sp Lisbon(2)@1.5 x Benfica(3)@1.62</td><td>2.43</td><td class="status-perdeu">PERDEU</td><td>-10.00</td><td>30.50</td></tr>
+            <tr><td>22</td><td>Sp Lisbon(2)@1.36 x Benfica(3)@1.13</td><td>1.54</td><td class="status-ganhou">GANHOU</td><td>+5.40</td><td>35.90</td></tr>
+            <tr><td>23</td><td>Benfica(2)@1.13 x Sp Lisbon(3)@1.36</td><td>1.54</td><td class="status-perdeu">PERDEU</td><td>-10.00</td><td>25.90</td></tr>
+            <tr><td>25</td><td>Sp Lisbon(2)@1.4 x Benfica(3)@1.17</td><td>1.64</td><td class="status-ganhou">GANHOU</td><td>+6.40</td><td>32.30</td></tr>
+            <tr><td>26</td><td>Sp Lisbon(2)@1.14 x Benfica(3)@1.33</td><td>1.52</td><td class="status-ganhou">GANHOU</td><td>+5.20</td><td>37.50</td></tr>
+            <tr><td>27</td><td>Sp Lisbon(2)@1.2 x Benfica(3)@1.1</td><td>1.32</td><td class="status-ganhou">GANHOU</td><td>+3.20</td><td>40.70</td></tr>
+            <tr><td>29</td><td>Sp Lisbon(2)@1.25 x Benfica(3)@1.25</td><td>1.56</td><td class="status-ganhou">GANHOU</td><td>+5.60</td><td>46.30</td></tr>
+            <tr><td>30</td><td>Sp Lisbon(2)@1.3 x Benfica(3)@1.4</td><td>1.82</td><td class="status-ganhou">GANHOU</td><td>+8.20</td><td>54.50</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const profitData = [7.60, 21.00, 11.00, 22.60, 27.20, 32.40, 22.40, 28.50, 18.50, 8.50, 15.70, 24.50, 29.50, 35.00, 40.50, 30.50, 35.90, 25.90, 32.30, 37.50, 40.70, 46.30, 54.50];
+    const labels = ['Jornada 2', 'Jornada 3', 'Jornada 4', 'Jornada 5', 'Jornada 6', 'Jornada 8', 'Jornada 9', 'Jornada 10', 'Jornada 12', 'Jornada 13', 'Jornada 15', 'Jornada 16', 'Jornada 17', 'Jornada 18', 'Jornada 19', 'Jornada 21', 'Jornada 22', 'Jornada 23', 'Jornada 25', 'Jornada 26', 'Jornada 27', 'Jornada 29', 'Jornada 30'];
+
+    const ctx = document.getElementById('profitChart').getContext('2d');
+    const profitChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Lucro Acumulado (EUR)',
+                data: profitData,
+                borderColor: '#00796b',
+                backgroundColor: 'rgba(0, 121, 107, 0.1)',
+                borderWidth: 2,
+                pointBackgroundColor: '#004d40',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Jornada',
+                        color: '#555'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Lucro Acumulado (EUR)',
+                        color: '#555'
+                    },
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
