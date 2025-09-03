@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análise da Simulação de Apostas - Liga NOS 23/24</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -71,10 +70,6 @@
             font-weight: 700;
             margin: 5px 0 0;
             color: #1b5e20;
-        }
-
-        .chart-container {
-            margin-bottom: 40px;
         }
 
         h2 {
@@ -149,11 +144,6 @@
         </div>
     </div>
 
-    <div class="chart-container">
-        <h2>Evolução do Lucro ao Longo da Época</h2>
-        <canvas id="profitChart"></canvas>
-    </div>
-
     <h2>Detalhe de Cada Aposta</h2>
     <table>
         <thead>
@@ -193,65 +183,6 @@
         </tbody>
     </table>
 </div>
-
-<script>
-    const profitData = [7.60, 21.00, 11.00, 22.60, 27.20, 32.40, 22.40, 28.50, 18.50, 8.50, 15.70, 24.50, 29.50, 35.00, 40.50, 30.50, 35.90, 25.90, 32.30, 37.50, 40.70, 46.30, 54.50];
-    const labels = ['Jornada 2', 'Jornada 3', 'Jornada 4', 'Jornada 5', 'Jornada 6', 'Jornada 8', 'Jornada 9', 'Jornada 10', 'Jornada 12', 'Jornada 13', 'Jornada 15', 'Jornada 16', 'Jornada 17', 'Jornada 18', 'Jornada 19', 'Jornada 21', 'Jornada 22', 'Jornada 23', 'Jornada 25', 'Jornada 26', 'Jornada 27', 'Jornada 29', 'Jornada 30'];
-
-    const ctx = document.getElementById('profitChart').getContext('2d');
-    const profitChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Lucro Acumulado (EUR)',
-                data: profitData,
-                borderColor: '#00796b',
-                backgroundColor: 'rgba(0, 121, 107, 0.1)',
-                borderWidth: 2,
-                pointBackgroundColor: '#004d40',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Jornada',
-                        color: '#555'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Lucro Acumulado (EUR)',
-                        color: '#555'
-                    },
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
-                            }
-                            return label;
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
 
 </body>
 </html>
