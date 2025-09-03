@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: LM Studio MCP Tool Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Developer Focus -->
+    <!-- Application Structure Plan: The SPA is structured as an interactive wizard. A clickable step-navigator at the top controls which step's content is displayed in the main area. This focuses the user on one task at a time, making the technical setup process less overwhelming and easier to follow than a linear document. Key interactions include step navigation and one-click copy buttons for all code snippets and commands. New Gemini API-powered features enhance usability by providing on-demand code explanations and prompt generation. -->
+    <!-- Visualization & Content Choices: Report Info: Step-by-step process -> Goal: Guide -> Viz: Interactive Step Navigator (HTML/CSS) + Content Panes (JS show/hide). | Report Info: Code blocks/commands -> Goal: Enable Action -> Viz: Styled code blocks (HTML/CSS) -> Interaction: Copy-to-clipboard button (JS) and new Gemini API-powered "Explain Code" button. Justification: Improves usability and reduces errors by adding context. | Report Info: File structure -> Goal: Clarify -> Viz: Visual Diagram (HTML/CSS). Justification: More intuitive than text. This design uses no external JS libraries for visualization. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #1e293b; /* slate-800 */
+            color: #e2e8f0; /* slate-200 */
+        }
+        .step-item.active {
+            border-color: #4f46e5; /* indigo-600 */
+            background-color: #eef2ff; /* indigo-50 */
+            color: #4f46e5;
+        }
+        .step-item.active .step-circle {
+            background-color: #4f46e5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700">
+
+    <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-slate-900">LM Studio Web Tool Setup</h1>
+            <p class="mt-2 text-lg text-indigo-600 font-semibold">Interactive Guide</p>
+            <p class="mt-4 max-w-3xl mx-auto">
+                This guide will walk you through creating a custom web-fetching tool for your local models in LM Studio. Follow the steps below to securely give your AI internet access capabilities.
+            </p>
+        </header>
+
+        <main class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+            <!-- Step Navigation -->
+            <nav id="step-nav" class="flex flex-col sm:flex-row items-center justify-between border-b border-slate-200 pb-6 mb-8 space-y-4 sm:space-y-0">
+                <div data-step="1" class="step-item active flex items-center p-2 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-300">
+                    <span class="step-circle flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-sm mr-3">1</span>
+                    <span class="font-semibold">Environment</span>
+                </div>
+                <div class="h-px sm:h-auto sm:w-full flex-1 bg-slate-200 mx-4"></div>
+                <div data-step="2" class="step-item flex items-center p-2 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-300">
+                    <span class="step-circle flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-sm mr-3">2</span>
+                    <span class="font-semibold">Project File</span>
+                </div>
+                <div class="h-px sm:h-auto sm:w-full flex-1 bg-slate-200 mx-4"></div>
+                <div data-step="3" class="step-item flex items-center p-2 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-300">
+                    <span class="step-circle flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-sm mr-3">3</span>
+                    <span class="font-semibold">Server Script</span>
+                </div>
+                <div class="h-px sm:h-auto sm:w-full flex-1 bg-slate-200 mx-4"></div>
+                <div data-step="4" class="step-item flex items-center p-2 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-300">
+                    <span class="step-circle flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-sm mr-3">4</span>
+                    <span class="font-semibold">Install</span>
+                </div>
+                <div class="h-px sm:h-auto sm:w-full flex-1 bg-slate-200 mx-4"></div>
+                <div data-step="5" class="step-item flex items-center p-2 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-300">
+                    <span class="step-circle flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-sm mr-3">5</span>
+                    <span class="font-semibold">Register</span>
+                </div>
+                 <div class="h-px sm:h-auto sm:w-full flex-1 bg-slate-200 mx-4"></div>
+                <div data-step="6" class="step-item flex items-center p-2 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-300">
+                    <span class="step-circle flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-sm mr-3">6</span>
+                    <span class="font-semibold">Use Tool</span>
+                </div>
+            </nav>
+
+            <!-- Content Panes -->
+            <div id="content-panes">
+                <div id="step-1-content" class="step-content">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Step 1: Set Up Your Python Environment</h2>
+                    <p class="mb-6">First, create a new, empty folder on your computer to hold the project files. This will be your main project directory. All subsequent files and folders will be created inside this one.</p>
+                     <div class="bg-slate-100 p-4 rounded-lg flex items-center space-x-4 border border-slate-200">
+                        <span class="text-2xl">📁</span>
+                        <div>
+                            <p class="font-semibold">Create a Project Folder</p>
+                            <p class="text-sm text-slate-600">e.g., `my-mcp-server`</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-2-content" class="step-content hidden">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Step 2: Create `pyproject.toml`</h2>
+                    <p class="mb-6">Inside your project folder, create a file named `pyproject.toml`. This file manages your project's dependencies and tells Python how to package your tool. Copy the content below into this file.</p>
+                    <div class="relative mb-2">
+                        <pre class="code-block p-4 rounded-lg overflow-x-auto text-sm"><code id="code-pyproject">[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "url-text-fetcher"
+version = "0.1.0"
+description = "FastMCP server for URL text fetching"
+authors = [{ name="Your Name", email="your_email@example.com" }]
+dependencies = [
+    "fastmcp",
+    "requests",
+    "beautifulsoup4",
+]
+
+[project.scripts]
+url-text-fetcher = "url_text_fetcher.mcp_server:main"</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold py-1 px-2 rounded-md transition-all duration-200" data-target="code-pyproject">Copy</button>
+                    </div>
+                    <div class="flex justify-end mb-6">
+                        <button id="explain-pyproject-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold py-2 px-4 rounded-md transition-all duration-200 flex items-center justify-center">✨ Explain Code</button>
+                    </div>
+                    <div id="explanation-pyproject" class="text-slate-600 italic leading-relaxed animate-fade-in"></div>
+                </div>
+                
+                <div id="step-3-content" class="step-content hidden">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Step 3: Create the MCP Server Script</h2>
+                    <p class="mb-6">This Python script contains the actual logic for your tool. It's important to get the folder structure correct. Inside your main project folder, create a <span class="font-semibold">new subfolder</span> named `url_text_fetcher`. Then, inside that new subfolder, create the file `mcp_server.py`.</p>
+                    <div class="bg-slate-100 p-4 rounded-lg border border-slate-200 mb-6 font-mono text-sm">
+                        <p>my-mcp-server/ <span>📁</span></p>
+                        <p class="pl-4">├── pyproject.toml <span>📄</span></p>
+                        <p class="pl-4">└── url_text_fetcher/ <span>📁</span></p>
+                        <p class="pl-12">└── mcp_server.py <span>🐍</span></p>
+                    </div>
+                    <p class="mb-4">Copy the following code into `mcp_server.py`:</p>
+                    <div class="relative mb-2">
+                        <pre class="code-block p-4 rounded-lg overflow-x-auto text-sm"><code id="code-mcp-server">import requests
+from bs4 import BeautifulSoup
+from mcp.server.fastmcp import FastMCP
+from typing import List
+
+mcp = FastMCP("URL Text Fetcher")
+
+@mcp.tool()
+def fetch_url_text(url: str) -> str:
+    """Download all visible text from a URL."""
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+        return soup.get_text(separator="\\n", strip=True)
+    except requests.exceptions.RequestException as e:
+        return f"An error occurred while fetching the URL: {e}"
+
+@mcp.tool()
+def fetch_page_links(url: str) -> List[str]:
+    """Return a list of all links on the page."""
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+        return [a['href'] for a in soup.find_all('a', href=True)]
+    except requests.exceptions.RequestException as e:
+        return f"An error occurred while fetching the URL: {e}"
+
+def main():
+    mcp.run()
+
+if __name__ == "__main__":
+    main()</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold py-1 px-2 rounded-md transition-all duration-200" data-target="code-mcp-server">Copy</button>
+                    </div>
+                    <div class="flex justify-end mb-6">
+                        <button id="explain-mcp-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold py-2 px-4 rounded-md transition-all duration-200 flex items-center justify-center">✨ Explain Code</button>
+                    </div>
+                    <div id="explanation-mcp" class="text-slate-600 italic leading-relaxed animate-fade-in"></div>
+                </div>
+
+                <div id="step-4-content" class="step-content hidden">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Step 4: Install Your Local MCP Server</h2>
+                    <p class="mb-6">Open your terminal or command prompt. Navigate into your project's root folder (the one containing `pyproject.toml`). Then, run the following command to install your server as an editable local package. This allows you to make changes to the script without needing to reinstall.</p>
+                    <div class="relative">
+                        <pre class="code-block p-4 rounded-lg overflow-x-auto text-sm"><code id="code-install">pip install -e .</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold py-1 px-2 rounded-md transition-all duration-200" data-target="code-install">Copy</button>
+                    </div>
+                </div>
+
+                <div id="step-5-content" class="step-content hidden">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Step 5: Register Your Server in LM Studio</h2>
+                    <p class="mb-4">Now, you need to tell LM Studio about your new tool.</p>
+                    <ol class="list-decimal list-inside space-y-2 mb-6">
+                        <li>Open LM Studio and go to the chat window.</li>
+                        <li>At the bottom, find the "Integrations" section and click "Edit mcp.json."</li>
+                        <li>Add the configuration below. This example also includes the Brave Search tool, which you can use by getting a free API key from Brave.</li>
+                    </ol>
+                    <div class="relative">
+                        <pre class="code-block p-4 rounded-lg overflow-x-auto text-sm"><code id="code-mcp-json">{
+  "mcpServers": {
+    "url-text-fetcher": {
+      "command": "python",
+      "args": [
+        "-m",
+        "url_text_fetcher.mcp_server"
+      ]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "put_your_brave_api_key_here"
+      }
+    }
+  }
+}</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold py-1 px-2 rounded-md transition-all duration-200" data-target="code-mcp-json">Copy</button>
+                    </div>
+                </div>
+
+                <div id="step-6-content" class="step-content hidden">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Step 6: Use the Tool in LM Studio</h2>
+                    <p class="mb-4">With the `mcp.json` file saved, you can activate your tools.</p>
+                    <ol class="list-decimal list-inside space-y-2 mb-6">
+                        <li>In the LM Studio chat window, click the "Integrations" button (it looks like a plugin icon 🔌).</li>
+                        <li>You should now see both `mcp/url-text-fetcher` and `mcp/brave-search` listed. Select one or both to enable them for the session.</li>
+                        <li>You can now prompt your model to use the tool.</li>
+                    </ol>
+                    <p class="mb-4 font-semibold text-slate-800">Need some help with your first prompt?</p>
+                    <div class="flex justify-start mb-6">
+                        <button id="generate-prompt-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold py-2 px-4 rounded-md transition-all duration-200 flex items-center justify-center">✨ Generate Prompt</button>
+                    </div>
+                     <div id="generated-prompt-container" class="bg-slate-100 p-4 rounded-lg border border-slate-200 space-y-2 animate-fade-in hidden">
+                        <p class="font-semibold text-sm text-slate-600">Generated Prompts:</p>
+                        <div id="generated-prompts" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
+        const apiKey = "";
+        
+        async function callGeminiAPI(userQuery, systemPrompt) {
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            let response;
+            try {
+                response = await fetch(API_URL + apiKey, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                return text || "Error: Could not get a valid response.";
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                return "An error occurred. Please try again.";
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const stepNav = document.getElementById('step-nav');
+            const stepItems = stepNav.querySelectorAll('.step-item');
+            const contentPanes = document.querySelectorAll('.step-content');
+
+            function showStep(stepNumber) {
+                stepItems.forEach(item => {
+                    if (item.dataset.step == stepNumber) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+
+                contentPanes.forEach(pane => {
+                    if (pane.id === `step-${stepNumber}-content`) {
+                        pane.classList.remove('hidden');
+                    } else {
+                        pane.classList.add('hidden');
+                    }
+                });
+            }
+            
+            stepNav.addEventListener('click', (e) => {
+                const stepItem = e.target.closest('.step-item');
+                if (stepItem) {
+                    const stepNumber = stepItem.dataset.step;
+                    showStep(stepNumber);
+                }
+            });
+
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    const codeElement = document.getElementById(targetId);
+                    const textToCopy = codeElement.innerText;
+
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    }
+                    document.body.removeChild(textArea);
+                });
+            });
+
+            document.getElementById('explain-pyproject-btn').addEventListener('click', async () => {
+                const code = document.getElementById('code-pyproject').innerText;
+                const explanationDiv = document.getElementById('explanation-pyproject');
+                explanationDiv.innerHTML = "Loading...";
+                const explanation = await callGeminiAPI(
+                    `Explain the following pyproject.toml file in simple terms for a beginner developer: \n\n${code}`,
+                    `You are a knowledgeable and patient coding tutor. Provide a concise, easy-to-understand explanation of the purpose of a pyproject.toml file and each section of the code provided.`
+                );
+                explanationDiv.innerHTML = explanation.replace(/\n/g, '<br>');
+            });
+
+            document.getElementById('explain-mcp-btn').addEventListener('click', async () => {
+                const code = document.getElementById('code-mcp-server').innerText;
+                const explanationDiv = document.getElementById('explanation-mcp');
+                explanationDiv.innerHTML = "Loading...";
+                const explanation = await callGeminiAPI(
+                    `Explain the following Python code for an LM Studio tool, focusing on the main functions and what the tool does: \n\n${code}`,
+                    `You are a knowledgeable and patient coding tutor. Provide a concise, easy-to-understand explanation of the Python script provided. Explain what the @mcp.tool decorator does, and describe the purpose of each function (fetch_url_text, fetch_page_links).`
+                );
+                explanationDiv.innerHTML = explanation.replace(/\n/g, '<br>');
+            });
+            
+            document.getElementById('generate-prompt-btn').addEventListener('click', async () => {
+                const button = document.getElementById('generate-prompt-btn');
+                const container = document.getElementById('generated-prompt-container');
+                const promptsDiv = document.getElementById('generated-prompts');
+                button.textContent = "Generating...";
+                container.classList.remove('hidden');
+                
+                const promptQuery = `Based on the provided LM Studio tool setup, which fetches visible text and links from a URL, generate 3 clear and concise example prompts that a user could use to interact with a large language model and this tool. Format the response as a simple list.`;
+                const systemPrompt = `You are a helpful assistant that generates example prompts for a large language model. Focus on clear, concise, and effective prompts. Do not include any extra text besides the prompts themselves.`;
+
+                const generatedText = await callGeminiAPI(promptQuery, systemPrompt);
+                
+                const prompts = generatedText.split('\n').filter(p => p.trim() !== '');
+                promptsDiv.innerHTML = '';
+                prompts.forEach(p => {
+                    const promptElement = document.createElement('p');
+                    promptElement.className = 'font-mono text-sm';
+                    promptElement.textContent = p;
+                    promptsDiv.appendChild(promptElement);
+                });
+                
+                button.textContent = "✨ Generate Prompt";
+            });
+
+            showStep(1);
+        });
+    </script>
+</body>
+</html>

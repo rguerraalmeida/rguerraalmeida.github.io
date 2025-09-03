@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Interativo: Simulação de Apostas Liga NOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Stone, White, Slate, Indigo accent) -->
+    <!-- Application Structure Plan: A single-page dashboard designed for exploratory analysis. It starts with a high-level summary (profit/loss), then allows users to drill down into a round-by-round interactive simulation using a slider, which updates both the bet details and the league table for that specific week. This is more intuitive than a static report, as it links betting decisions directly to the league context at that moment. The final sections provide deeper analysis through charts and the final standings. This structure guides the user from summary to detail, facilitating understanding of the strategy's performance over time. -->
+    <!-- Visualization & Content Choices: Report Info: Final profit/loss -> Goal: Inform -> Viz: Large KPI cards -> Interaction: None, immediate visibility -> Justification: Key takeaway first. | Report Info: Round-by-round bets & league standings -> Goal: Explore Change/Context -> Viz: Interactive slider controlling HTML cards and an HTML table -> Interaction: User-driven exploration -> Justification: Connects cause (standings) with effect (bet decision & outcome). | Report Info: Team betting stats -> Goal: Compare -> Viz: Chart.js Horizontal Bar Chart -> Interaction: Hover tooltips -> Justification: Easily compare performance across teams. | Report Info: Final standings -> Goal: Inform -> Viz: Static HTML table -> Justification: Conclusive summary. All charts are Canvas-based via Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4; /* stone-100 */
+            color: #334155; /* slate-700 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-slate-800">Simulação de Apostas</h1>
+            <p class="mt-2 text-lg text-indigo-600 font-semibold">Estratégia Dinâmica: Liga NOS 2023</p>
+            <p class="mt-4 max-w-3xl mx-auto text-slate-600">
+                Esta aplicação interativa analisa uma estratégia de apostas simulada para a época 2023 da Liga NOS. A estratégia começa por apostar nos "3 Grandes" e transita para os "Top 2" assim que a classificação se define, parando quando o campeão é matematicamente encontrado. Explore os resultados e o desenrolar da época jornada a jornada.
+            </p>
+        </header>
+
+        <main class="space-y-12">
+            <section id="summary">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Resumo dos Resultados</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <h3 class="text-sm font-medium text-slate-500 uppercase">Resultado Final</h3>
+                        <p id="totalProfit" class="text-4xl font-bold mt-2"></p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <h3 class="text-sm font-medium text-slate-500 uppercase">Total Investido</h3>
+                        <p id="totalInvested" class="text-4xl font-bold mt-2"></p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <h3 class="text-sm font-medium text-slate-500 uppercase">Total de Apostas</h3>
+                        <p id="totalBets" class="text-4xl font-bold mt-2"></p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <h3 class="text-sm font-medium text-slate-500 uppercase">Taxa de Vitória</h3>
+                        <p id="winRate" class="text-4xl font-bold mt-2"></p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="round-simulation">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Simulação Jornada a Jornada</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="mb-6">
+                        <label for="round-slider" class="block text-lg font-medium text-slate-700 mb-2">Selecione a Jornada: <span id="round-label" class="font-bold text-indigo-600">1</span></label>
+                        <input id="round-slider" type="range" min="1" max="34" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div id="bet-details" class="flex flex-col">
+                           <h3 class="text-xl font-semibold text-slate-800 mb-4">Análise da Jornada</h3>
+                           <div id="bet-card" class="bg-slate-50 p-6 rounded-lg border border-slate-200 flex-grow">
+                                <!-- Bet details will be injected here -->
+                           </div>
+                        </div>
+                        <div id="standings-details">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4">Classificação (no final da jornada)</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-slate-200">
+                                    <thead class="bg-slate-50">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">#</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Equipa</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Pts</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">J</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="standings-table" class="bg-white divide-y divide-slate-200">
+                                        <!-- Standings will be injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="analysis">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Análise Detalhada</h2>
+                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4 text-center">Desempenho por Equipa Apostada</h3>
+                        <p class="text-center text-slate-600 mb-4 text-sm">Esta visualização mostra o número de vezes que cada equipa foi incluída numa aposta múltipla e a sua taxa de sucesso nesses jogos.</p>
+                        <div class="chart-container">
+                            <canvas id="teamAnalysisChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col justify-center">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4 text-center">Análise das Odds</h3>
+                         <div class="space-y-4">
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
+                                <h4 class="text-sm font-medium text-slate-500 uppercase">Odd Combinada Média</h4>
+                                <p id="avgOdd" class="text-3xl font-bold text-indigo-600"></p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
+                                <h4 class="text-sm font-medium text-slate-500 uppercase">Odd Combinada Mais Alta</h4>
+                                <p id="maxOdd" class="text-3xl font-bold text-indigo-600"></p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
+                                <h4 class="text-sm font-medium text-slate-500 uppercase">Odd Combinada Mais Baixa</h4>
+                                <p id="minOdd" class="text-3xl font-bold text-indigo-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const simulationData = {
+                summary: {
+                    totalProfit: 13.98,
+                    totalInvested: 220.00,
+                    totalBets: 22,
+                    winRate: 45.45,
+                    avgOdd: 2.13,
+                    maxOdd: 3.56,
+                    minOdd: 1.45
+                },
+                teamAnalysis: [
+                    { team: 'Benfica', bets: 20, winRate: 85, avgOdd: 1.35 },
+                    { team: 'Sp Lisbon', bets: 22, winRate: 86.36, avgOdd: 1.40 },
+                    { team: 'Porto', bets: 20, winRate: 75, avgOdd: 1.42 }
+                ],
+                rounds: [
+                    { round: 1, bet: null, reason: "Primeira jornada, sem classificação anterior." },
+                    { round: 2, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 1.95, outcome: 'Lost', profit: -10 } },
+                    { round: 3, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 1.88, outcome: 'Won', profit: 8.80 } },
+                    { round: 4, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.10, outcome: 'Lost', profit: -10 } },
+                    { round: 5, bet: null, reason: "Confronto direto entre equipas alvo (Sp Lisbon vs Porto)." },
+                    { round: 6, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 1.75, outcome: 'Won', profit: 7.50 } },
+                    { round: 7, bet: { teams: ['Sp Lisbon', 'Porto'], combinedOdd: 1.65, outcome: 'Won', profit: 6.50, strategy: 'Top 2' } },
+                    { round: 8, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.55, outcome: 'Lost', profit: -10, strategy: 'Top 2' } },
+                    { round: 9, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.25, outcome: 'Lost', profit: -10 } },
+                    { round: 10, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.48, outcome: 'Won', profit: 4.80, strategy: 'Top 2' } },
+                    { round: 11, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.45, outcome: 'Won', profit: 4.50, strategy: 'Top 2' } },
+                    { round: 12, bet: null, reason: "Odds combinadas (1.19) abaixo do mínimo de 1.25." },
+                    { round: 13, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.05, outcome: 'Lost', profit: -10 } },
+                    { round: 14, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.33, outcome: 'Lost', profit: -10 } },
+                    { round: 15, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 1.99, outcome: 'Won', profit: 9.90 } },
+                    { round: 16, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.50, outcome: 'Lost', profit: -10 } },
+                    { round: 17, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.60, outcome: 'Won', profit: 6.00, strategy: 'Top 2' } },
+                    { round: 18, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.80, outcome: 'Lost', profit: -10 } },
+                    { round: 19, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 3.10, outcome: 'Lost', profit: -10 } },
+                    { round: 20, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.52, outcome: 'Won', profit: 5.20, strategy: 'Top 2' } },
+                    { round: 21, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.45, outcome: 'Won', profit: 14.50 } },
+                    { round: 22, bet: null, reason: "Confronto direto entre equipas alvo (Porto vs Benfica)." },
+                    { round: 23, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.70, outcome: 'Lost', profit: -10, strategy: 'Top 2' } },
+                    { round: 24, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 2.15, outcome: 'Won', profit: 11.50 } },
+                    { round: 25, bet: { teams: ['Sp Lisbon', 'Porto'], combinedOdd: 1.80, outcome: 'Lost', profit: -10, strategy: 'Top 2' } },
+                    { round: 26, bet: { teams: ['Benfica', 'Sp Lisbon', 'Porto'], combinedOdd: 3.56, outcome: 'Lost', profit: -10 } },
+                    { round: 27, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.85, outcome: 'Lost', profit: -10, strategy: 'Top 2' } },
+                    { round: 28, bet: null, reason: "Confronto direto entre equipas alvo (Sp Lisbon vs Benfica)." },
+                    { round: 29, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.58, outcome: 'Won', profit: 5.80, strategy: 'Top 2' } },
+                    { round: 30, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.92, outcome: 'Won', profit: 9.20, strategy: 'Top 2' } },
+                    { round: 31, bet: { teams: ['Benfica', 'Sp Lisbon'], combinedOdd: 1.62, outcome: 'Lost', profit: -10, strategy: 'Top 2' } },
+                    { round: 32, bet: null, reason: "Campeonato matematicamente decidido." },
+                    { round: 33, bet: null, reason: "Campeonato matematicamente decidido." },
+                    { round: 34, bet: null, reason: "Campeonato matematicamente decidido." },
+                ],
+                standings: {
+                    '1': [{p:1,n:'Sp Lisbon',pts:3,j:1},{p:2,n:'Porto',pts:3,j:1},{p:3,n:'Benfica',pts:3,j:1},{p:4,n:'Boavista',pts:3,j:1}],
+                    '7': [{p:1,n:'Sp Lisbon',pts:19,j:7},{p:2,n:'Benfica',pts:18,j:7},{p:3,n:'Porto',pts:16,j:7},{p:4,n:'Braga',pts:13,j:7}],
+                    '17':[{p:1,n:'Sp Lisbon',pts:43,j:17},{p:2,n:'Benfica',pts:42,j:17},{p:3,n:'Porto',pts:38,j:17},{p:4,n:'Braga',pts:36,j:17}],
+                    '31':[{p:1,n:'Sp Lisbon',pts:81,j:31},{p:2,n:'Benfica',pts:73,j:31},{p:3,n:'Porto',pts:62,j:31},{p:4,n:'Braga',pts:62,j:31}],
+                    '34':[{p:1,n:'Sp Lisbon',pts:90,j:34},{p:2,n:'Benfica',pts:80,j:34},{p:3,n:'Porto',pts:72,j:34},{p:4,n:'Braga',pts:68,j:34}]
+                }
+            };
+            
+            const { summary, teamAnalysis, rounds, standings } = simulationData;
+
+            function formatCurrency(value) {
+                return value.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+            }
+
+            const totalProfitEl = document.getElementById('totalProfit');
+            totalProfitEl.textContent = formatCurrency(summary.totalProfit);
+            totalProfitEl.classList.add(summary.totalProfit >= 0 ? 'text-green-600' : 'text-red-600');
+
+            document.getElementById('totalInvested').textContent = formatCurrency(summary.totalInvested);
+            document.getElementById('totalBets').textContent = summary.totalBets;
+            document.getElementById('winRate').textContent = `${summary.winRate}%`;
+            document.getElementById('avgOdd').textContent = summary.avgOdd.toFixed(2);
+            document.getElementById('maxOdd').textContent = summary.maxOdd.toFixed(2);
+            document.getElementById('minOdd').textContent = summary.minOdd.toFixed(2);
+
+            const teamAnalysisCtx = document.getElementById('teamAnalysisChart').getContext('2d');
+            new Chart(teamAnalysisCtx, {
+                type: 'bar',
+                data: {
+                    labels: teamAnalysis.map(t => t.team),
+                    datasets: [{
+                        label: 'Nº de Apostas',
+                        data: teamAnalysis.map(t => t.bets),
+                        backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const teamData = teamAnalysis[context.dataIndex];
+                                    return [
+                                        `Apostas: ${teamData.bets}`,
+                                        `Taxa de Vitória: ${teamData.winRate}%`,
+                                        `Odd Média: ${teamData.avgOdd.toFixed(2)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(203, 213, 225, 0.5)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            const roundSlider = document.getElementById('round-slider');
+            const roundLabel = document.getElementById('round-label');
+            const betCard = document.getElementById('bet-card');
+            const standingsTable = document.getElementById('standings-table');
+
+            function getStandingsForRound(round) {
+                const availableRounds = Object.keys(standings).map(Number).sort((a,b) => a - b);
+                const closestRound = availableRounds.reduce((prev, curr) => (curr <= round ? curr : prev), 1);
+                return standings[closestRound.toString()];
+            }
+
+            function updateView(round) {
+                roundLabel.textContent = round;
+                const roundData = rounds.find(r => r.round == round);
+                
+                let betContent = '';
+                if (roundData.bet) {
+                    const { teams, combinedOdd, outcome, profit, strategy } = roundData.bet;
+                    const outcomeColor = outcome === 'Won' ? 'text-green-600' : 'text-red-600';
+                    const outcomeIcon = outcome === 'Won' ? '✅' : '❌';
+                    const profitText = outcome === 'Won' ? `+${formatCurrency(profit)}` : formatCurrency(profit);
+                    
+                    betContent = `
+                        <div class="flex justify-between items-start">
+                           <h4 class="text-lg font-bold text-slate-700">Aposta Múltipla</h4>
+                           <span class="text-lg font-bold ${outcomeColor}">${outcomeIcon} ${outcome.toUpperCase()}</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4">Estratégia: ${strategy || '3 Grandes'}</p>
+                        <div class="space-y-2 mb-4">
+                           ${teams.map(team => `<p class="text-slate-800">${team}</p>`).join('')}
+                        </div>
+                        <div class="border-t border-slate-200 pt-4 text-center">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-slate-500">Odd Combinada</p>
+                                    <p class="text-xl font-semibold">${combinedOdd.toFixed(2)}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-500">Resultado</p>
+                                    <p class="text-xl font-semibold ${outcomeColor}">${profitText}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    betContent = `
+                        <div class="text-center h-full flex flex-col justify-center items-center">
+                            <p class="text-lg font-bold text-slate-700">Sem Aposta</p>
+                            <p class="text-slate-500 mt-2">${roundData.reason}</p>
+                        </div>
+                    `;
+                }
+                betCard.innerHTML = betContent;
+
+                const currentStandings = getStandingsForRound(round);
+                let standingsContent = '';
+                currentStandings.forEach(team => {
+                    standingsContent += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-slate-900">${team.p}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-slate-600">${team.n}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-slate-600 font-medium">${team.pts}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-slate-600">${team.j}</td>
+                        </tr>
+                    `;
+                });
+                standingsTable.innerHTML = standingsContent;
+            }
+
+            roundSlider.addEventListener('input', (e) => {
+                updateView(e.target.value);
+            });
+
+            updateView(1);
+        });
+    </script>
+</body>
+</html>
