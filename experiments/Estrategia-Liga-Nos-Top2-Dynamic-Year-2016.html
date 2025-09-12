@@ -1,1179 +1,985 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulação de Apostas - Liga NOS 2016/2017</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-            line-height: 1.6;
+            background-color: #f4f4f4;
         }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2, h3 {
-            color: #1a2a4b;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 5px;
-            margin-top: 25px;
-        }
-        h1 {
+        .report-header {
             text-align: center;
-            font-size: 2.5em;
-            color: #0d47a1;
-            border-bottom: none;
+            margin-bottom: 30px;
+            color: #333;
         }
-        h2 {
-            font-size: 1.8em;
+        .report-header h1 {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+        .report-summary {
+            background-color: #e9e9e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .report-summary h2 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        .jornada-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+        .left-panel, .right-panel {
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+        }
+        .left-panel {
+            background-color: #f9f9f9;
+        }
+        .right-panel {
+            background-color: #fff;
+            border-left: 1px solid #ccc;
+        }
+        .jornada-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
         }
         h3 {
-            font-size: 1.4em;
-            color: #4a6fa5;
+            margin-top: 0;
+            color: #007bff;
         }
-        pre {
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        h4 {
+            margin-bottom: 5px;
+            color: #555;
         }
-        .info-box {
-            background-color: #e3f2fd;
-            border-left: 5px solid #2196f3;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .win {
+            color: green;
+            font-weight: bold;
+        }
+        .loss {
+            color: red;
+            font-weight: bold;
         }
         .bet-info {
-            background-color: #fafafa;
-            border-left: 3px solid #6c757d;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
+            font-size: 0.9em;
+            color: #777;
         }
-        .bet-win {
-            color: #1b5e20;
-            font-weight: bold;
+        .final-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        .bet-loss {
-            color: #b71c1c;
-            font-weight: bold;
+        .final-results-table th, .final-results-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
-        .result-win {
-            background-color: #e8f5e9;
-            border-left-color: #4caf50;
+        .final-results-table th {
+            background-color: #0056b3;
+            color: white;
         }
-        .result-loss {
-            background-color: #ffebee;
-            border-left-color: #f44336;
+        .final-results-table tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
-        .summary-box {
-            background-color: #f1f8e9;
-            border: 2px solid #4caf50;
-            padding: 20px;
+        .financial-summary {
             margin-top: 30px;
+            background-color: #e9e9e9;
+            padding: 20px;
             border-radius: 8px;
-            text-align: center;
         }
-        .summary-loss {
-            background-color: #fbe9e7;
-            border: 2px solid #ef5350;
+        .financial-summary .profit {
+            color: green;
         }
-        .summary-box p {
-            margin: 5px 0;
-            font-size: 1.1em;
+        .financial-summary .loss {
+            color: red;
         }
-        .summary-box .profit {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #388e3c;
-        }
-        .summary-box .loss {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #d32f2f;
-        }
-        .final-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .final-table th, .final-table td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        .final-table th {
-            background-color: #0d47a1;
-            color: white;
-            font-weight: bold;
-        }
-        .final-table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .final-table tr:hover {
-            background-color: #ddd;
-        }
-        .financial-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .financial-table th, .financial-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        .financial-table th {
-            background-color: #6c757d;
-            color: white;
-        }
-        .financial-table tr:nth-child(even) {
-            background-color: #f2f2f2;
+        @media (max-width: 768px) {
+            .jornada-container {
+                flex-direction: column;
+            }
+            .right-panel {
+                border-left: none;
+                border-top: 1px solid #ccc;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Simulação de Apostas</h1>
-    <h2>Liga NOS Top 2 - Época 2016/2017</h2>
+<div class="report-header">
+    <h1>Relatório de Simulação de Apostas</h1>
+    <p>Simulação de Apostas Múltiplas Dinâmica Liga NOS Top 2 - Época 2016/2017</p>
+</div>
 
-    <div class="info-box">
-        <p><strong>Estratégia:</strong> Aposta múltipla nos 3 grandes até haver top 2 claro, depois top 2</p>
-        <p><strong>Valor da aposta:</strong> EUR10 por aposta múltipla</p>
-        <p><strong>Odds combinadas mínimas:</strong> 1.25</p>
-        <p><strong>Total de jornadas:</strong> 34</p>
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 1 - 12/08/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Jornada 1 - Classificação insuficiente, usando Big 3</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.3 vs Tondela | Sp Lisbon@1.22 vs Maritimo | Porto@1.6 vs Rio Ave = Odd combinada: 2.54</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Tondela 10 x 1.3 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.3</span>)</li>
+            <li>Sp Lisbon 1.22 x 13 Maritimo → Vitoria casa (<span class="win">WIN Sp Lisbon@1.22</span>)</li>
+            <li>Rio Ave 5.75 x 1.6 Porto → Vitoria fora (<span class="win">WIN Porto@1.6</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR25.38</strong></p>
     </div>
-
-    <pre>
-Consulta executada com sucesso. Encontrados 306 jogos.
-
-=== JORNADA 1 - 12/08/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 1 (baseado em jornadas anteriores)...
-  [INFO] Jornada 1 - Classificacao insuficiente, usando Big 3
-  [APOSTA FEITA] Benfica@1.3 vs Tondela | Sp Lisbon@1.22 vs Maritimo | Porto@1.6 vs Rio Ave = Odd combinada: 2.54
-
-  [RESULTADOS] Processando resultados da Jornada 1...
-  [JOGOS APOSTADOS]:
-    Tondela 10 x 1.3 Benfica → Vitoria fora (WIN Benfica@1.3)
-    Sp Lisbon 1.22 x 13 Maritimo → Vitoria casa (WIN Sp Lisbon@1.22)
-    Rio Ave 5.75 x 1.6 Porto → Vitoria fora (WIN Porto@1.6)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR25.38
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 1]:
-    1. Boavista: 3 pts (1J 1V-0E-0D)
-    2. Benfica: 3 pts (1J 1V-0E-0D)
-    3. Porto: 3 pts (1J 1V-0E-0D)
-    4. Setubal: 3 pts (1J 1V-0E-0D)
-
-=== JORNADA 2 - 19/08/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 2 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 1]:
-    1. Boavista: 3 pts (1J 1V-0E-0D)
-    2. Benfica: 3 pts (1J 1V-0E-0D)
-    3. Porto: 3 pts (1J 1V-0E-0D)
-    4. Setubal: 3 pts (1J 1V-0E-0D)
-  [INFO] Jornada 2 - Classificacao insuficiente, usando Big 3
-  [APOSTA FEITA] Benfica@1.17 vs Setubal | Sp Lisbon@1.4 vs Pacos Ferreira | Porto@1.29 vs Estoril = Odd combinada: 2.11
-
-  [RESULTADOS] Processando resultados da Jornada 2...
-  [JOGOS APOSTADOS]:
-    Benfica 1.17 x 15 Setubal → Empate (LOSS Benfica@1.17)
-    Pacos Ferreira 9 x 1.4 Sp Lisbon → Vitoria fora (WIN Sp Lisbon@1.4)
-    Porto 1.29 x 9.5 Estoril → Vitoria casa (WIN Porto@1.29)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 2]:
-    1. Porto: 6 pts (2J 2V-0E-0D)
-    2. Sp Lisbon: 6 pts (2J 2V-0E-0D)
-    3. Boavista: 4 pts (2J 1V-1E-0D)
-    4. Benfica: 4 pts (2J 1V-1E-0D)
-
-=== JORNADA 3 - 26/08/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 3 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 2]:
-    1. Porto: 6 pts (2J 2V-0E-0D)
-    2. Sp Lisbon: 6 pts (2J 2V-0E-0D)
-    3. Boavista: 4 pts (2J 1V-1E-0D)
-    4. Benfica: 4 pts (2J 1V-1E-0D)
-  [INFO] Jornada 3 - Classificacao insuficiente, usando Big 3
-  [CONFLITOS] Sp Lisbon vs Porto (confronto direto)
-  [NAO APOSTA] Equipas disponiveis insuficientes (1)
-
-  [RESULTADOS] Processando resultados da Jornada 3...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 3]:
-    1. Sp Lisbon: 9 pts (3J 3V-0E-0D)
-    2. Benfica: 7 pts (3J 2V-1E-0D)
-    3. Setubal: 7 pts (3J 2V-1E-0D)
-    4. Sp Braga: 7 pts (3J 2V-1E-0D)
-
-=== JORNADA 4 - 09/09/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 4 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 3]:
-    1. Sp Lisbon: 9 pts (3J 3V-0E-0D)
-    2. Benfica: 7 pts (3J 2V-1E-0D)
-    3. Setubal: 7 pts (3J 2V-1E-0D)
-    4. Sp Braga: 7 pts (3J 2V-1E-0D)
-  [INFO] Usando Big 3 (empate no topo: 1º=9, 2º=7, 3º=7 pts)
-  [APOSTA FEITA] Benfica@1.45 vs Arouca | Sp Lisbon@1.29 vs Moreirense | Porto@1.36 vs Guimaraes = Odd combinada: 2.54
-
-  [RESULTADOS] Processando resultados da Jornada 4...
-  [JOGOS APOSTADOS]:
-    Arouca 7.5 x 1.45 Benfica → Vitoria fora (WIN Benfica@1.45)
-    Sp Lisbon 1.29 x 12 Moreirense → Vitoria casa (WIN Sp Lisbon@1.29)
-    Porto 1.36 x 7.5 Guimaraes → Vitoria casa (WIN Porto@1.36)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR25.44
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 4]:
-    1. Sp Lisbon: 12 pts (4J 4V-0E-0D)
-    2. Benfica: 10 pts (4J 3V-1E-0D)
-    3. Sp Braga: 10 pts (4J 3V-1E-0D)
-    4. Porto: 9 pts (4J 3V-0E-1D)
-
-=== JORNADA 5 - 16/09/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 5 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 4]:
-    1. Sp Lisbon: 12 pts (4J 4V-0E-0D)
-    2. Benfica: 10 pts (4J 3V-1E-0D)
-    3. Sp Braga: 10 pts (4J 3V-1E-0D)
-    4. Porto: 9 pts (4J 3V-0E-1D)
-  [INFO] Usando Big 3 (empate no topo: 1º=12, 2º=10, 3º=10 pts)
-  [APOSTA FEITA] Benfica@1.55 vs Sp Braga | Sp Lisbon@1.57 vs Rio Ave | Porto@1.36 vs Tondela = Odd combinada: 3.31
-
-  [RESULTADOS] Processando resultados da Jornada 5...
-  [JOGOS APOSTADOS]:
-    Benfica 1.55 x 6 Sp Braga → Vitoria casa (WIN Benfica@1.55)
-    Rio Ave 5.5 x 1.57 Sp Lisbon → Vitoria casa (LOSS Sp Lisbon@1.57)
-    Tondela 8.5 x 1.36 Porto → Empate (LOSS Porto@1.36)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 5]:
-    1. Benfica: 13 pts (5J 4V-1E-0D)
-    2. Sp Lisbon: 12 pts (5J 4V-0E-1D)
-    3. Rio Ave: 10 pts (5J 3V-1E-1D)
-    4. Porto: 10 pts (5J 3V-1E-1D)
-
-=== JORNADA 6 - 23/09/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 6 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 5]:
-    1. Benfica: 13 pts (5J 4V-1E-0D)
-    2. Sp Lisbon: 12 pts (5J 4V-0E-1D)
-    3. Rio Ave: 10 pts (5J 3V-1E-1D)
-    4. Porto: 10 pts (5J 3V-1E-1D)
-  [INFO] Usando Top 2: Benfica (13pts), Sp Lisbon (12pts)
-  [APOSTA FEITA] Benfica@1.44 vs Chaves | Sp Lisbon@1.17 vs Estoril = Odd combinada: 1.68
-
-  [RESULTADOS] Processando resultados da Jornada 6...
-  [JOGOS APOSTADOS]:
-    Chaves 9 x 1.44 Benfica → Vitoria fora (WIN Benfica@1.44)
-    Sp Lisbon 1.17 x 19 Estoril → Vitoria casa (WIN Sp Lisbon@1.17)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR16.85
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 6]:
-    1. Benfica: 16 pts (6J 5V-1E-0D)
-    2. Sp Lisbon: 15 pts (6J 5V-0E-1D)
-    3. Porto: 13 pts (6J 4V-1E-1D)
-    4. Sp Braga: 13 pts (6J 4V-1E-1D)
-
-=== JORNADA 7 - 30/09/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 7 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 6]:
-    1. Benfica: 16 pts (6J 5V-1E-0D)
-    2. Sp Lisbon: 15 pts (6J 5V-0E-1D)
-    3. Porto: 13 pts (6J 4V-1E-1D)
-    4. Sp Braga: 13 pts (6J 4V-1E-1D)
-  [INFO] Usando Top 2: Benfica (16pts), Sp Lisbon (15pts)
-  [APOSTA FEITA] Benfica@1.14 vs Feirense | Sp Lisbon@1.67 vs Guimaraes = Odd combinada: 1.9
-
-  [RESULTADOS] Processando resultados da Jornada 7...
-  [JOGOS APOSTADOS]:
-    Benfica 1.14 x 19 Feirense → Vitoria casa (WIN Benfica@1.14)
-    Guimaraes 5.25 x 1.67 Sp Lisbon → Empate (LOSS Sp Lisbon@1.67)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 7]:
-    1. Benfica: 19 pts (7J 6V-1E-0D)
-    2. Sp Lisbon: 16 pts (7J 5V-1E-1D)
-    3. Porto: 16 pts (7J 5V-1E-1D)
-    4. Sp Braga: 14 pts (7J 4V-2E-1D)
-
-=== JORNADA 8 - 21/10/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 8 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 7]:
-    1. Benfica: 19 pts (7J 6V-1E-0D)
-    2. Sp Lisbon: 16 pts (7J 5V-1E-1D)
-    3. Porto: 16 pts (7J 5V-1E-1D)
-    4. Sp Braga: 14 pts (7J 4V-2E-1D)
-  [INFO] Usando Big 3 (empate no topo: 1º=19, 2º=16, 3º=16 pts)
-  [APOSTA FEITA] Benfica@1.44 vs Belenenses | Sp Lisbon@1.18 vs Tondela | Porto@1.18 vs Arouca = Odd combinada: 2.01
-
-  [RESULTADOS] Processando resultados da Jornada 8...
-  [JOGOS APOSTADOS]:
-    Belenenses 7.5 x 1.44 Benfica → Vitoria fora (WIN Benfica@1.44)
-    Sp Lisbon 1.18 x 15 Tondela → Empate (LOSS Sp Lisbon@1.18)
-    Porto 1.18 x 15 Arouca → Vitoria casa (WIN Porto@1.18)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 8]:
-    1. Benfica: 22 pts (8J 7V-1E-0D)
-    2. Porto: 19 pts (8J 6V-1E-1D)
-    3. Sp Lisbon: 17 pts (8J 5V-2E-1D)
-    4. Sp Braga: 17 pts (8J 5V-2E-1D)
-
-=== JORNADA 9 - 28/10/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 9 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 8]:
-    1. Benfica: 22 pts (8J 7V-1E-0D)
-    2. Porto: 19 pts (8J 6V-1E-1D)
-    3. Sp Lisbon: 17 pts (8J 5V-2E-1D)
-    4. Sp Braga: 17 pts (8J 5V-2E-1D)
-  [INFO] Usando Top 2: Benfica (22pts), Porto (19pts)
-  [APOSTA FEITA] Benfica@1.2 vs Pacos Ferreira | Porto@1.29 vs Setubal = Odd combinada: 1.55
-
-  [RESULTADOS] Processando resultados da Jornada 9...
-  [JOGOS APOSTADOS]:
-    Benfica 1.2 x 15 Pacos Ferreira → Vitoria casa (WIN Benfica@1.2)
-    Setubal 9 x 1.29 Porto → Empate (LOSS Porto@1.29)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 9]:
-    1. Benfica: 25 pts (9J 8V-1E-0D)
-    2. Porto: 20 pts (9J 6V-2E-1D)
-    3. Sp Braga: 20 pts (9J 6V-2E-1D)
-    4. Sp Lisbon: 18 pts (9J 5V-3E-1D)
-
-=== JORNADA 10 - 04/11/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 10 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 9]:
-    1. Benfica: 25 pts (9J 8V-1E-0D)
-    2. Porto: 20 pts (9J 6V-2E-1D)
-    3. Sp Braga: 20 pts (9J 6V-2E-1D)
-    4. Sp Lisbon: 18 pts (9J 5V-3E-1D)
-  [INFO] Usando Big 3 (empate no topo: 1º=25, 2º=20, 3º=20 pts)
-  [CONFLITOS] Porto vs Benfica (confronto direto)
-  [NAO APOSTA] Equipas disponiveis insuficientes (1)
-
-  [RESULTADOS] Processando resultados da Jornada 10...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 10]:
-    1. Benfica: 26 pts (10J 8V-2E-0D)
-    2. Porto: 21 pts (10J 6V-3E-1D)
-    3. Sp Lisbon: 21 pts (10J 6V-3E-1D)
-    4. Guimaraes: 20 pts (10J 6V-2E-2D)
-
-=== JORNADA 11 - 25/11/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 11 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 10]:
-    1. Benfica: 26 pts (10J 8V-2E-0D)
-    2. Porto: 21 pts (10J 6V-3E-1D)
-    3. Sp Lisbon: 21 pts (10J 6V-3E-1D)
-    4. Guimaraes: 20 pts (10J 6V-2E-2D)
-  [INFO] Usando Big 3 (empate no topo: 1º=26, 2º=21, 3º=21 pts)
-  [APOSTA FEITA] Benfica@1.17 vs Moreirense | Sp Lisbon@1.33 vs Boavista | Porto@1.29 vs Belenenses = Odd combinada: 2.01
-
-  [RESULTADOS] Processando resultados da Jornada 11...
-  [JOGOS APOSTADOS]:
-    Benfica 1.17 x 15 Moreirense → Vitoria casa (WIN Benfica@1.17)
-    Boavista 9 x 1.33 Sp Lisbon → Vitoria fora (WIN Sp Lisbon@1.33)
-    Belenenses 10 x 1.29 Porto → Empate (LOSS Porto@1.29)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 11]:
-    1. Benfica: 29 pts (11J 9V-2E-0D)
-    2. Sp Lisbon: 24 pts (11J 7V-3E-1D)
-    3. Sp Braga: 23 pts (11J 7V-2E-2D)
-    4. Porto: 22 pts (11J 6V-4E-1D)
-
-=== JORNADA 12 - 02/12/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 12 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 11]:
-    1. Benfica: 29 pts (11J 9V-2E-0D)
-    2. Sp Lisbon: 24 pts (11J 7V-3E-1D)
-    3. Sp Braga: 23 pts (11J 7V-2E-2D)
-    4. Porto: 22 pts (11J 6V-4E-1D)
-  [INFO] Usando Top 2: Benfica (29pts), Sp Lisbon (24pts)
-  [APOSTA FEITA] Benfica@1.36 vs Maritimo | Sp Lisbon@1.2 vs Setubal = Odd combinada: 1.63
-
-  [RESULTADOS] Processando resultados da Jornada 12...
-  [JOGOS APOSTADOS]:
-    Maritimo 9.5 x 1.36 Benfica → Vitoria casa (LOSS Benfica@1.36)
-    Sp Lisbon 1.2 x 15 Setubal → Vitoria casa (WIN Sp Lisbon@1.2)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 12]:
-    1. Benfica: 29 pts (12J 9V-2E-1D)
-    2. Sp Lisbon: 27 pts (12J 8V-3E-1D)
-    3. Porto: 25 pts (12J 7V-4E-1D)
-    4. Sp Braga: 23 pts (12J 7V-2E-3D)
-
-=== JORNADA 13 - 09/12/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 13 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 12]:
-    1. Benfica: 29 pts (12J 9V-2E-1D)
-    2. Sp Lisbon: 27 pts (12J 8V-3E-1D)
-    3. Porto: 25 pts (12J 7V-4E-1D)
-    4. Sp Braga: 23 pts (12J 7V-2E-3D)
-  [INFO] Usando Top 2: Benfica (29pts), Sp Lisbon (27pts)
-  [CONFLITOS] Benfica vs Sp Lisbon (confronto direto)
-  [NAO APOSTA] Equipas disponiveis insuficientes (0)
-
-  [RESULTADOS] Processando resultados da Jornada 13...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 13]:
-    1. Benfica: 32 pts (13J 10V-2E-1D)
-    2. Porto: 28 pts (13J 8V-4E-1D)
-    3. Sp Lisbon: 27 pts (13J 8V-3E-2D)
-    4. Sp Braga: 26 pts (13J 8V-2E-3D)
-
-=== JORNADA 14 - 16/12/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 14 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 13]:
-    1. Benfica: 32 pts (13J 10V-2E-1D)
-    2. Porto: 28 pts (13J 8V-4E-1D)
-    3. Sp Lisbon: 27 pts (13J 8V-3E-2D)
-    4. Sp Braga: 26 pts (13J 8V-2E-3D)
-  [INFO] Usando Top 2: Benfica (32pts), Porto (28pts)
-  [APOSTA FEITA] Benfica@1.22 vs Estoril | Porto@1.17 vs Chaves = Odd combinada: 1.43
-
-  [RESULTADOS] Processando resultados da Jornada 14...
-  [JOGOS APOSTADOS]:
-    Estoril 13 x 1.22 Benfica → Vitoria fora (WIN Benfica@1.22)
-    Porto 1.17 x 14 Chaves → Vitoria casa (WIN Porto@1.17)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR14.27
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 14]:
-    1. Benfica: 35 pts (14J 11V-2E-1D)
-    2. Porto: 31 pts (14J 9V-4E-1D)
-    3. Sp Braga: 29 pts (14J 9V-2E-3D)
-    4. Guimaraes: 27 pts (14J 8V-3E-3D)
-
-=== JORNADA 15 - 15/12/2016 ===
-
-  [APOSTAS] Analisando apostas para Jornada 15 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 14]:
-    1. Benfica: 35 pts (14J 11V-2E-1D)
-    2. Porto: 31 pts (14J 9V-4E-1D)
-    3. Sp Braga: 29 pts (14J 9V-2E-3D)
-    4. Guimaraes: 27 pts (14J 8V-3E-3D)
-  [INFO] Usando Top 2: Benfica (35pts), Porto (31pts)
-  [APOSTA FEITA] Benfica@1.2 vs Rio Ave | Porto@1.2 vs Maritimo = Odd combinada: 1.44
-
-  [RESULTADOS] Processando resultados da Jornada 15...
-  [JOGOS APOSTADOS]:
-    Benfica 1.2 x 15 Rio Ave → Vitoria casa (WIN Benfica@1.2)
-    Porto 1.2 x 15 Maritimo → Vitoria casa (WIN Porto@1.2)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR14.4
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 15]:
-    1. Benfica: 38 pts (15J 12V-2E-1D)
-    2. Porto: 34 pts (15J 10V-4E-1D)
-    3. Sp Braga: 32 pts (15J 10V-2E-3D)
-    4. Guimaraes: 30 pts (15J 9V-3E-3D)
-
-=== JORNADA 16 - 07/01/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 16 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 15]:
-    1. Benfica: 38 pts (15J 12V-2E-1D)
-    2. Porto: 34 pts (15J 10V-4E-1D)
-    3. Sp Braga: 32 pts (15J 10V-2E-3D)
-    4. Guimaraes: 30 pts (15J 9V-3E-3D)
-  [INFO] Usando Top 2: Benfica (38pts), Porto (34pts)
-  [APOSTA FEITA] Benfica@1.62 vs Guimaraes | Porto@1.36 vs Pacos Ferreira = Odd combinada: 2.2
-
-  [RESULTADOS] Processando resultados da Jornada 16...
-  [JOGOS APOSTADOS]:
-    Guimaraes 5.5 x 1.62 Benfica → Vitoria fora (WIN Benfica@1.62)
-    Pacos Ferreira 8 x 1.36 Porto → Empate (LOSS Porto@1.36)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 16]:
-    1. Benfica: 41 pts (16J 13V-2E-1D)
-    2. Porto: 35 pts (16J 10V-5E-1D)
-    3. Sp Lisbon: 33 pts (16J 10V-3E-3D)
-    4. Sp Braga: 33 pts (16J 10V-3E-3D)
-
-=== JORNADA 17 - 13/01/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 17 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 16]:
-    1. Benfica: 41 pts (16J 13V-2E-1D)
-    2. Porto: 35 pts (16J 10V-5E-1D)
-    3. Sp Lisbon: 33 pts (16J 10V-3E-3D)
-    4. Sp Braga: 33 pts (16J 10V-3E-3D)
-  [INFO] Usando Top 2: Benfica (41pts), Porto (35pts)
-  [APOSTA FEITA] Benfica@1.14 vs Boavista | Porto@1.2 vs Moreirense = Odd combinada: 1.37
-
-  [RESULTADOS] Processando resultados da Jornada 17...
-  [JOGOS APOSTADOS]:
-    Benfica 1.14 x 17 Boavista → Empate (LOSS Benfica@1.14)
-    Porto 1.2 x 13 Moreirense → Vitoria casa (WIN Porto@1.2)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 17]:
-    1. Benfica: 42 pts (17J 13V-3E-1D)
-    2. Porto: 38 pts (17J 11V-5E-1D)
-    3. Sp Braga: 36 pts (17J 11V-3E-3D)
-    4. Sp Lisbon: 34 pts (17J 10V-4E-3D)
-
-=== JORNADA 18 - 20/01/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 18 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 17]:
-    1. Benfica: 42 pts (17J 13V-3E-1D)
-    2. Porto: 38 pts (17J 11V-5E-1D)
-    3. Sp Braga: 36 pts (17J 11V-3E-3D)
-    4. Sp Lisbon: 34 pts (17J 10V-4E-3D)
-  [INFO] Usando Top 2: Benfica (42pts), Porto (38pts)
-  [APOSTA FEITA] Benfica@1.11 vs Tondela | Porto@1.25 vs Rio Ave = Odd combinada: 1.39
-
-  [RESULTADOS] Processando resultados da Jornada 18...
-  [JOGOS APOSTADOS]:
-    Benfica 1.11 x 19 Tondela → Vitoria casa (WIN Benfica@1.11)
-    Porto 1.25 x 12 Rio Ave → Vitoria casa (WIN Porto@1.25)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR13.88
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 18]:
-    1. Benfica: 45 pts (18J 14V-3E-1D)
-    2. Porto: 41 pts (18J 12V-5E-1D)
-    3. Sp Braga: 36 pts (18J 11V-3E-4D)
-    4. Sp Lisbon: 35 pts (18J 10V-5E-3D)
-
-=== JORNADA 19 - 27/01/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 19 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 18]:
-    1. Benfica: 45 pts (18J 14V-3E-1D)
-    2. Porto: 41 pts (18J 12V-5E-1D)
-    3. Sp Braga: 36 pts (18J 11V-3E-4D)
-    4. Sp Lisbon: 35 pts (18J 10V-5E-3D)
-  [INFO] Usando Top 2: Benfica (45pts), Porto (41pts)
-  [APOSTA FEITA] Benfica@1.33 vs Setubal | Porto@1.25 vs Estoril = Odd combinada: 1.66
-
-  [RESULTADOS] Processando resultados da Jornada 19...
-  [JOGOS APOSTADOS]:
-    Setubal 8.5 x 1.33 Benfica → Vitoria casa (LOSS Benfica@1.33)
-    Estoril 11 x 1.25 Porto → Vitoria fora (WIN Porto@1.25)
-  [RESULTADO] <span class="bet-loss">PERDEU</span> - Retorno: EUR0
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 19]:
-    1. Benfica: 45 pts (19J 14V-3E-2D)
-    2. Porto: 44 pts (19J 13V-5E-1D)
-    3. Sp Lisbon: 38 pts (19J 11V-5E-3D)
-    4. Sp Braga: 36 pts (19J 11V-3E-5D)
-
-=== JORNADA 20 - 03/02/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 20 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 19]:
-    1. Benfica: 45 pts (19J 14V-3E-2D)
-    2. Porto: 44 pts (19J 13V-5E-1D)
-    3. Sp Lisbon: 38 pts (19J 11V-5E-3D)
-    4. Sp Braga: 36 pts (19J 11V-3E-5D)
-  [INFO] Usando Top 2: Benfica (45pts), Porto (44pts)
-  [CONFLITOS] Porto vs Sp Lisbon (vs Big3)
-  [NAO APOSTA] Equipas disponiveis insuficientes (1)
-
-  [RESULTADOS] Processando resultados da Jornada 20...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 20]:
-    1. Benfica: 48 pts (20J 15V-3E-2D)
-    2. Porto: 47 pts (20J 14V-5E-1D)
-    3. Sp Lisbon: 38 pts (20J 11V-5E-4D)
-    4. Sp Braga: 37 pts (20J 11V-4E-5D)
-
-=== JORNADA 21 - 10/02/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 21 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 20]:
-    1. Benfica: 48 pts (20J 15V-3E-2D)
-    2. Porto: 47 pts (20J 14V-5E-1D)
-    3. Sp Lisbon: 38 pts (20J 11V-5E-4D)
-    4. Sp Braga: 37 pts (20J 11V-4E-5D)
-  [INFO] Usando Top 2: Benfica (48pts), Porto (47pts)
-  [APOSTA FEITA] Benfica@1.18 vs Arouca | Porto@1.53 vs Guimaraes = Odd combinada: 1.81
-
-  [RESULTADOS] Processando resultados da Jornada 21...
-  [JOGOS APOSTADOS]:
-    Benfica 1.18 x 15 Arouca → Vitoria casa (WIN Benfica@1.18)
-    Guimaraes 6.5 x 1.53 Porto → Vitoria fora (WIN Porto@1.53)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR18.05
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 21]:
-    1. Benfica: 51 pts (21J 16V-3E-2D)
-    2. Porto: 50 pts (21J 15V-5E-1D)
-    3. Sp Lisbon: 41 pts (21J 12V-5E-4D)
-    4. Sp Braga: 38 pts (21J 11V-5E-5D)
-
-=== JORNADA 22 - 17/02/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 22 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 21]:
-    1. Benfica: 51 pts (21J 16V-3E-2D)
-    2. Porto: 50 pts (21J 15V-5E-1D)
-    3. Sp Lisbon: 44 pts (22J 13V-5E-4D)
-    4. Sp Braga: 38 pts (22J 11V-5E-6D)
-  [INFO] Usando Top 2: Benfica (51pts), Porto (50pts)
-  [APOSTA FEITA] Benfica@1.73 vs Sp Braga | Porto@1.13 vs Tondela = Odd combinada: 1.95
-
-  [RESULTADOS] Processando resultados da Jornada 22...
-  [JOGOS APOSTADOS]:
-    Sp Braga 5 x 1.73 Benfica → Vitoria fora (WIN Benfica@1.73)
-    Porto 1.13 x 23 Tondela → Vitoria casa (WIN Porto@1.13)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR19.55
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 22]:
-    1. Benfica: 54 pts (22J 17V-3E-2D)
-    2. Porto: 53 pts (22J 16V-5E-1D)
-    3. Sp Lisbon: 44 pts (22J 13V-5E-4D)
-    4. Sp Braga: 38 pts (22J 11V-5E-6D)
-
-=== JORNADA 23 - 24/02/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 23 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 22]:
-    1. Benfica: 54 pts (22J 17V-3E-2D)
-    2. Porto: 53 pts (22J 16V-5E-1D)
-    3. Sp Lisbon: 44 pts (22J 13V-5E-4D)
-    4. Sp Braga: 38 pts (22J 11V-5E-6D)
-  [INFO] Usando Top 2: Benfica (54pts), Porto (53pts)
-  [APOSTA FEITA] Benfica@1.18 vs Chaves | Porto@1.36 vs Boavista = Odd combinada: 1.6
-
-  [RESULTADOS] Processando resultados da Jornada 23...
-  [JOGOS APOSTADOS]:
-    Benfica 1.18 x 15 Chaves → Vitoria casa (WIN Benfica@1.18)
-    Boavista 9.5 x 1.36 Porto → Vitoria fora (WIN Porto@1.36)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR16.05
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 23]:
-    1. Benfica: 57 pts (23J 18V-3E-2D)
-    2. Porto: 56 pts (23J 17V-5E-1D)
-    3. Sp Lisbon: 47 pts (23J 14V-5E-4D)
-    4. Guimaraes: 39 pts (23J 11V-6E-6D)
-
-=== JORNADA 24 - 03/03/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 24 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 23]:
-    1. Benfica: 57 pts (23J 18V-3E-2D)
-    2. Porto: 56 pts (23J 17V-5E-1D)
-    3. Sp Lisbon: 48 pts (24J 14V-6E-4D)
-    4. Sp Braga: 42 pts (24J 12V-6E-6D)
-  [INFO] Usando Top 2: Benfica (57pts), Porto (56pts)
-  [APOSTA FEITA] Benfica@1.36 vs Feirense | Porto@1.13 vs Nacional = Odd combinada: 1.54
-
-  [RESULTADOS] Processando resultados da Jornada 24...
-  [JOGOS APOSTADOS]:
-    Feirense 8 x 1.36 Benfica → Vitoria fora (WIN Benfica@1.36)
-    Porto 1.13 x 19 Nacional → Vitoria casa (WIN Porto@1.13)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR15.37
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 24]:
-    1. Benfica: 60 pts (24J 19V-3E-2D)
-    2. Porto: 59 pts (24J 18V-5E-1D)
-    3. Sp Lisbon: 48 pts (24J 14V-6E-4D)
-    4. Sp Braga: 42 pts (24J 12V-6E-6D)
-
-=== JORNADA 25 - 10/03/2017 ===
-
-  [APOSTAS] Analisando apostas para Jornada 25 (baseado em jornadas anteriores)...
-  [CLASSIFICACAO PARA APOSTAS - Apos Jornada 24]:
-    1. Benfica: 60 pts (24J 19V-3E-2D)
-    2. Porto: 59 pts (24J 18V-5E-1D)
-    3. Sp Lisbon: 48 pts (24J 14V-6E-4D)
-    4. Sp Braga: 42 pts (24J 12V-6E-6D)
-  [INFO] Usando Top 2: Benfica (60pts), Porto (59pts)
-  [APOSTA FEITA] Benfica@1.18 vs Belenenses | Porto@1.25 vs Arouca = Odd combinada: 1.48
-
-  [RESULTADOS] Processando resultados da Jornada 25...
-  [JOGOS APOSTADOS]:
-    Benfica 1.18 x 15 Belenenses → Vitoria casa (WIN Benfica@1.18)
-    Arouca 13 x 1.25 Porto → Vitoria fora (WIN Porto@1.25)
-  [RESULTADO] <span class="bet-win">GANHOU</span> - Retorno: EUR14.75
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 25]:
-    1. Benfica: 63 pts (25J 20V-3E-2D)
-    2. Porto: 62 pts (25J 19V-5E-1D)
-    3. Sp Lisbon: 51 pts (25J 15V-6E-4D)
-    4. Sp Braga: 43 pts (25J 12V-7E-6D)
-
-=== JORNADA 26 - 17/03/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 26...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 26]:
-    1. Benfica: 64 pts (26J 20V-4E-2D)
-    2. Porto: 63 pts (26J 19V-6E-1D)
-    3. Sp Lisbon: 54 pts (26J 16V-6E-4D)
-    4. Sp Braga: 46 pts (26J 13V-7E-6D)
-
-=== JORNADA 27 - 31/03/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 27...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 27]:
-    1. Benfica: 65 pts (27J 20V-5E-2D)
-    2. Porto: 64 pts (27J 19V-7E-1D)
-    3. Sp Lisbon: 57 pts (27J 17V-6E-4D)
-    4. Guimaraes: 47 pts (27J 13V-8E-6D)
-
-=== JORNADA 28 - 07/04/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 28...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 28]:
-    1. Benfica: 68 pts (28J 21V-5E-2D)
-    2. Porto: 67 pts (28J 20V-7E-1D)
-    3. Sp Lisbon: 60 pts (28J 18V-6E-4D)
-    4. Guimaraes: 50 pts (28J 14V-8E-6D)
-
-=== JORNADA 29 - 14/04/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 29...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 29]:
-    1. Benfica: 71 pts (29J 22V-5E-2D)
-    2. Porto: 68 pts (29J 20V-8E-1D)
-    3. Sp Lisbon: 63 pts (29J 19V-6E-4D)
-    4. Guimaraes: 53 pts (29J 15V-8E-6D)
-
-=== JORNADA 30 - 21/04/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 30...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 30]:
-    1. Benfica: 72 pts (30J 22V-6E-2D)
-    2. Porto: 69 pts (30J 20V-9E-1D)
-    3. Sp Lisbon: 64 pts (30J 19V-7E-4D)
-    4. Guimaraes: 56 pts (30J 16V-8E-6D)
-
-=== JORNADA 31 - 28/04/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 31...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 31]:
-    1. Benfica: 75 pts (31J 23V-6E-2D)
-    2. Porto: 72 pts (31J 21V-9E-1D)
-    3. Sp Lisbon: 67 pts (31J 20V-7E-4D)
-    4. Guimaraes: 59 pts (31J 17V-8E-6D)
-
-=== JORNADA 32 - 05/05/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 32...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 32]:
-    1. Benfica: 78 pts (32J 24V-6E-2D)
-    2. Porto: 73 pts (32J 21V-10E-1D)
-    3. Sp Lisbon: 67 pts (32J 20V-7E-5D)
-    4. Guimaraes: 62 pts (32J 18V-8E-6D)
-
-=== JORNADA 33 - 12/05/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 33...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 33]:
-    1. Benfica: 81 pts (33J 25V-6E-2D)
-    2. Porto: 76 pts (33J 22V-10E-1D)
-    3. Sp Lisbon: 67 pts (33J 20V-7E-6D)
-    4. Guimaraes: 62 pts (33J 18V-8E-7D)
-
-=== JORNADA 34 - 20/05/2017 ===
-  [NAO APOSTA] Campeonato decidido
-
-  [RESULTADOS] Processando resultados da Jornada 34...
-
-  [CLASSIFICACAO ATUALIZADA - Apos Jornada 34]:
-    1. Benfica: 82 pts (34J 25V-7E-2D)
-    2. Porto: 76 pts (34J 22V-10E-2D)
-    3. Sp Lisbon: 70 pts (34J 21V-7E-6D)
-    4. Guimaraes: 62 pts (34J 18V-8E-8D)
-
-=== CLASSIFICACAO FINAL ===
-1. Benfica: 82 pts (34J 25V-7E-2D)
-2. Porto: 76 pts (34J 22V-10E-2D)
-3. Sp Lisbon: 70 pts (34J 21V-7E-6D)
-4. Guimaraes: 62 pts (34J 18V-8E-8D)
-5. Sp Braga: 54 pts (34J 15V-9E-10D)
-6. Maritimo: 50 pts (34J 13V-11E-10D)
-7. Rio Ave: 49 pts (34J 14V-7E-13D)
-8. Feirense: 48 pts (34J 14V-6E-14D)
-9. Boavista: 43 pts (34J 10V-13E-11D)
-10. Estoril: 38 pts (34J 10V-8E-16D)
-11. Setubal: 38 pts (34J 10V-8E-16D)
-12. Chaves: 38 pts (34J 8V-14E-12D)
-13. Belenenses: 36 pts (34J 9V-9E-16D)
-14. Pacos Ferreira: 36 pts (34J 8V-12E-14D)
-15. Moreirense: 33 pts (34J 8V-9E-17D)
-16. Arouca: 32 pts (34J 9V-5E-20D)
-17. Tondela: 32 pts (34J 8V-8E-18D)
-18. Nacional: 21 pts (34J 4V-9E-21D)
-
-</pre>
-
-    <h2>Resumo de Apostas e Resultados</h2>
-    <table class="financial-table">
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 1]</h4>
+        <ol>
+            <li>Boavista: 3 pts (1J 1V-0E-0D)</li>
+            <li>Benfica: 3 pts (1J 1V-0E-0D)</li>
+            <li>Porto: 3 pts (1J 1V-0E-0D)</li>
+            <li>Setubal: 3 pts (1J 1V-0E-0D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 2 - 19/08/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Jornada 2 - Classificacao insuficiente, usando Big 3</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.17 vs Setubal | Sp Lisbon@1.4 vs Pacos Ferreira | Porto@1.29 vs Estoril = Odd combinada: 2.11</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.17 x 15 Setubal → Empate (<span class="loss">LOSS Benfica@1.17</span>)</li>
+            <li>Pacos Ferreira 9 x 1.4 Sp Lisbon → Vitoria fora (<span class="win">WIN Sp Lisbon@1.4</span>)</li>
+            <li>Porto 1.29 x 9.5 Estoril → Vitoria casa (<span class="win">WIN Porto@1.29</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 2]</h4>
+        <ol>
+            <li>Porto: 6 pts (2J 2V-0E-0D)</li>
+            <li>Sp Lisbon: 6 pts (2J 2V-0E-0D)</li>
+            <li>Boavista: 4 pts (2J 1V-1E-0D)</li>
+            <li>Benfica: 4 pts (2J 1V-1E-0D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 3 - 26/08/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Jornada 3 - Classificacao insuficiente, usando Big 3</p>
+        <p class="bet-info">[CONFLITOS] Sp Lisbon vs Porto (confronto direto)</p>
+        <p><strong>[NAO APOSTA]</strong> Equipas disponiveis insuficientes (1)</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 3]</h4>
+        <ol>
+            <li>Sp Lisbon: 9 pts (3J 3V-0E-0D)</li>
+            <li>Benfica: 7 pts (3J 2V-1E-0D)</li>
+            <li>Setubal: 7 pts (3J 2V-1E-0D)</li>
+            <li>Sp Braga: 7 pts (3J 2V-1E-0D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 4 - 09/09/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Big 3 (empate no topo: 1º=9, 2º=7, 3º=7 pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.45 vs Arouca | Sp Lisbon@1.29 vs Moreirense | Porto@1.36 vs Guimaraes = Odd combinada: 2.54</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Arouca 7.5 x 1.45 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.45</span>)</li>
+            <li>Sp Lisbon 1.29 x 12 Moreirense → Vitoria casa (<span class="win">WIN Sp Lisbon@1.29</span>)</li>
+            <li>Porto 1.36 x 7.5 Guimaraes → Vitoria casa (<span class="win">WIN Porto@1.36</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR25.44</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 4]</h4>
+        <ol>
+            <li>Sp Lisbon: 12 pts (4J 4V-0E-0D)</li>
+            <li>Benfica: 10 pts (4J 3V-1E-0D)</li>
+            <li>Sp Braga: 10 pts (4J 3V-1E-0D)</li>
+            <li>Porto: 9 pts (4J 3V-0E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 5 - 16/09/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Big 3 (empate no topo: 1º=12, 2º=10, 3º=10 pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.55 vs Sp Braga | Sp Lisbon@1.57 vs Rio Ave | Porto@1.36 vs Tondela = Odd combinada: 3.31</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.55 x 6 Sp Braga → Vitoria casa (<span class="win">WIN Benfica@1.55</span>)</li>
+            <li>Rio Ave 5.5 x 1.57 Sp Lisbon → Vitoria casa (<span class="loss">LOSS Sp Lisbon@1.57</span>)</li>
+            <li>Tondela 8.5 x 1.36 Porto → Empate (<span class="loss">LOSS Porto@1.36</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 5]</h4>
+        <ol>
+            <li>Benfica: 13 pts (5J 4V-1E-0D)</li>
+            <li>Sp Lisbon: 12 pts (5J 4V-0E-1D)</li>
+            <li>Rio Ave: 10 pts (5J 3V-1E-1D)</li>
+            <li>Porto: 10 pts (5J 3V-1E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 6 - 23/09/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (13pts), Sp Lisbon (12pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.44 vs Chaves | Sp Lisbon@1.17 vs Estoril = Odd combinada: 1.68</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Chaves 9 x 1.44 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.44</span>)</li>
+            <li>Sp Lisbon 1.17 x 19 Estoril → Vitoria casa (<span class="win">WIN Sp Lisbon@1.17</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR16.85</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 6]</h4>
+        <ol>
+            <li>Benfica: 16 pts (6J 5V-1E-0D)</li>
+            <li>Sp Lisbon: 15 pts (6J 5V-0E-1D)</li>
+            <li>Porto: 13 pts (6J 4V-1E-1D)</li>
+            <li>Sp Braga: 13 pts (6J 4V-1E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 7 - 30/09/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (16pts), Sp Lisbon (15pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.14 vs Feirense | Sp Lisbon@1.67 vs Guimaraes = Odd combinada: 1.9</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.14 x 19 Feirense → Vitoria casa (<span class="win">WIN Benfica@1.14</span>)</li>
+            <li>Guimaraes 5.25 x 1.67 Sp Lisbon → Empate (<span class="loss">LOSS Sp Lisbon@1.67</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 7]</h4>
+        <ol>
+            <li>Benfica: 19 pts (7J 6V-1E-0D)</li>
+            <li>Sp Lisbon: 16 pts (7J 5V-1E-1D)</li>
+            <li>Porto: 16 pts (7J 5V-1E-1D)</li>
+            <li>Sp Braga: 14 pts (7J 4V-2E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 8 - 21/10/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Big 3 (empate no topo: 1º=19, 2º=16, 3º=16 pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.44 vs Belenenses | Sp Lisbon@1.18 vs Tondela | Porto@1.18 vs Arouca = Odd combinada: 2.01</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Belenenses 7.5 x 1.44 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.44</span>)</li>
+            <li>Sp Lisbon 1.18 x 15 Tondela → Empate (<span class="loss">LOSS Sp Lisbon@1.18</span>)</li>
+            <li>Porto 1.18 x 15 Arouca → Vitoria casa (<span class="win">WIN Porto@1.18</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 8]</h4>
+        <ol>
+            <li>Benfica: 22 pts (8J 7V-1E-0D)</li>
+            <li>Porto: 19 pts (8J 6V-1E-1D)</li>
+            <li>Sp Lisbon: 17 pts (8J 5V-2E-1D)</li>
+            <li>Sp Braga: 17 pts (8J 5V-2E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 9 - 28/10/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (22pts), Porto (19pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.2 vs Pacos Ferreira | Porto@1.29 vs Setubal = Odd combinada: 1.55</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.2 x 15 Pacos Ferreira → Vitoria casa (<span class="win">WIN Benfica@1.2</span>)</li>
+            <li>Setubal 9 x 1.29 Porto → Empate (<span class="loss">LOSS Porto@1.29</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 9]</h4>
+        <ol>
+            <li>Benfica: 25 pts (9J 8V-1E-0D)</li>
+            <li>Porto: 20 pts (9J 6V-2E-1D)</li>
+            <li>Sp Braga: 20 pts (9J 6V-2E-1D)</li>
+            <li>Sp Lisbon: 18 pts (9J 5V-3E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 10 - 04/11/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Big 3 (empate no topo: 1º=25, 2º=20, 3º=20 pts)</p>
+        <p class="bet-info">[CONFLITOS] Porto vs Benfica (confronto direto)</p>
+        <p><strong>[NAO APOSTA]</strong> Equipas disponiveis insuficientes (1)</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 10]</h4>
+        <ol>
+            <li>Benfica: 26 pts (10J 8V-2E-0D)</li>
+            <li>Porto: 21 pts (10J 6V-3E-1D)</li>
+            <li>Sp Lisbon: 21 pts (10J 6V-3E-1D)</li>
+            <li>Guimaraes: 20 pts (10J 6V-2E-2D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 11 - 25/11/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Big 3 (empate no topo: 1º=26, 2º=21, 3º=21 pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.17 vs Moreirense | Sp Lisbon@1.33 vs Boavista | Porto@1.29 vs Belenenses = Odd combinada: 2.01</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.17 x 15 Moreirense → Vitoria casa (<span class="win">WIN Benfica@1.17</span>)</li>
+            <li>Boavista 9 x 1.33 Sp Lisbon → Vitoria fora (<span class="win">WIN Sp Lisbon@1.33</span>)</li>
+            <li>Belenenses 10 x 1.29 Porto → Empate (<span class="loss">LOSS Porto@1.29</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 11]</h4>
+        <ol>
+            <li>Benfica: 29 pts (11J 9V-2E-0D)</li>
+            <li>Sp Lisbon: 24 pts (11J 7V-3E-1D)</li>
+            <li>Sp Braga: 23 pts (11J 7V-2E-2D)</li>
+            <li>Porto: 22 pts (11J 6V-4E-1D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 12 - 02/12/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (29pts), Sp Lisbon (24pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.36 vs Maritimo | Sp Lisbon@1.2 vs Setubal = Odd combinada: 1.63</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Maritimo 9.5 x 1.36 Benfica → Vitoria casa (<span class="loss">LOSS Benfica@1.36</span>)</li>
+            <li>Sp Lisbon 1.2 x 15 Setubal → Vitoria casa (<span class="win">WIN Sp Lisbon@1.2</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 12]</h4>
+        <ol>
+            <li>Benfica: 29 pts (12J 9V-2E-1D)</li>
+            <li>Sp Lisbon: 27 pts (12J 8V-3E-1D)</li>
+            <li>Porto: 25 pts (12J 7V-4E-1D)</li>
+            <li>Sp Braga: 23 pts (12J 7V-2E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 13 - 09/12/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (29pts), Sp Lisbon (27pts)</p>
+        <p class="bet-info">[CONFLITOS] Benfica vs Sp Lisbon (confronto direto)</p>
+        <p><strong>[NAO APOSTA]</strong> Equipas disponiveis insuficientes (0)</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 13]</h4>
+        <ol>
+            <li>Benfica: 32 pts (13J 10V-2E-1D)</li>
+            <li>Porto: 28 pts (13J 8V-4E-1D)</li>
+            <li>Sp Lisbon: 27 pts (13J 8V-3E-2D)</li>
+            <li>Sp Braga: 26 pts (13J 8V-2E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 14 - 16/12/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (32pts), Porto (28pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.22 vs Estoril | Porto@1.17 vs Chaves = Odd combinada: 1.43</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Estoril 13 x 1.22 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.22</span>)</li>
+            <li>Porto 1.17 x 14 Chaves → Vitoria casa (<span class="win">WIN Porto@1.17</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR14.27</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 14]</h4>
+        <ol>
+            <li>Benfica: 35 pts (14J 11V-2E-1D)</li>
+            <li>Porto: 31 pts (14J 9V-4E-1D)</li>
+            <li>Sp Braga: 29 pts (14J 9V-2E-3D)</li>
+            <li>Guimaraes: 27 pts (14J 8V-3E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 15 - 15/12/2016</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (35pts), Porto (31pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.2 vs Rio Ave | Porto@1.2 vs Maritimo = Odd combinada: 1.44</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.2 x 15 Rio Ave → Vitoria casa (<span class="win">WIN Benfica@1.2</span>)</li>
+            <li>Porto 1.2 x 15 Maritimo → Vitoria casa (<span class="win">WIN Porto@1.2</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR14.4</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 15]</h4>
+        <ol>
+            <li>Benfica: 38 pts (15J 12V-2E-1D)</li>
+            <li>Porto: 34 pts (15J 10V-4E-1D)</li>
+            <li>Sp Braga: 32 pts (15J 10V-2E-3D)</li>
+            <li>Guimaraes: 30 pts (15J 9V-3E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 16 - 07/01/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (38pts), Porto (34pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.62 vs Guimaraes | Porto@1.36 vs Pacos Ferreira = Odd combinada: 2.2</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Guimaraes 5.5 x 1.62 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.62</span>)</li>
+            <li>Pacos Ferreira 8 x 1.36 Porto → Empate (<span class="loss">LOSS Porto@1.36</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 16]</h4>
+        <ol>
+            <li>Benfica: 41 pts (16J 13V-2E-1D)</li>
+            <li>Porto: 35 pts (16J 10V-5E-1D)</li>
+            <li>Sp Lisbon: 33 pts (16J 10V-3E-3D)</li>
+            <li>Sp Braga: 33 pts (16J 10V-3E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 17 - 13/01/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (41pts), Porto (35pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.14 vs Boavista | Porto@1.2 vs Moreirense = Odd combinada: 1.37</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.14 x 17 Boavista → Empate (<span class="loss">LOSS Benfica@1.14</span>)</li>
+            <li>Porto 1.2 x 13 Moreirense → Vitoria casa (<span class="win">WIN Porto@1.2</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 17]</h4>
+        <ol>
+            <li>Benfica: 42 pts (17J 13V-3E-1D)</li>
+            <li>Porto: 38 pts (17J 11V-5E-1D)</li>
+            <li>Sp Braga: 36 pts (17J 11V-3E-3D)</li>
+            <li>Sp Lisbon: 34 pts (17J 10V-4E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 18 - 20/01/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (42pts), Porto (38pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.11 vs Tondela | Porto@1.25 vs Rio Ave = Odd combinada: 1.39</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.11 x 19 Tondela → Vitoria casa (<span class="win">WIN Benfica@1.11</span>)</li>
+            <li>Porto 1.25 x 12 Rio Ave → Vitoria casa (<span class="win">WIN Porto@1.25</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR13.88</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 18]</h4>
+        <ol>
+            <li>Benfica: 45 pts (18J 14V-3E-1D)</li>
+            <li>Porto: 41 pts (18J 12V-5E-1D)</li>
+            <li>Sp Braga: 36 pts (18J 11V-3E-4D)</li>
+            <li>Sp Lisbon: 35 pts (18J 10V-5E-3D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 19 - 27/01/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (45pts), Porto (41pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.33 vs Setubal | Porto@1.25 vs Estoril = Odd combinada: 1.66</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Setubal 8.5 x 1.33 Benfica → Vitoria casa (<span class="loss">LOSS Benfica@1.33</span>)</li>
+            <li>Estoril 11 x 1.25 Porto → Vitoria fora (<span class="win">WIN Porto@1.25</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="loss">PERDEU</span> - Retorno: EUR0</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 19]</h4>
+        <ol>
+            <li>Benfica: 45 pts (19J 14V-3E-2D)</li>
+            <li>Porto: 44 pts (19J 13V-5E-1D)</li>
+            <li>Sp Lisbon: 38 pts (19J 11V-5E-3D)</li>
+            <li>Sp Braga: 36 pts (19J 11V-3E-5D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 20 - 03/02/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (45pts), Porto (44pts)</p>
+        <p class="bet-info">[CONFLITOS] Porto vs Sp Lisbon (vs Big3)</p>
+        <p><strong>[NAO APOSTA]</strong> Equipas disponiveis insuficientes (1)</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 20]</h4>
+        <ol>
+            <li>Benfica: 48 pts (20J 15V-3E-2D)</li>
+            <li>Porto: 47 pts (20J 14V-5E-1D)</li>
+            <li>Sp Lisbon: 38 pts (20J 11V-5E-4D)</li>
+            <li>Sp Braga: 37 pts (20J 11V-4E-5D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 21 - 10/02/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (48pts), Porto (47pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.18 vs Arouca | Porto@1.53 vs Guimaraes = Odd combinada: 1.81</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.18 x 15 Arouca → Vitoria casa (<span class="win">WIN Benfica@1.18</span>)</li>
+            <li>Guimaraes 6.5 x 1.53 Porto → Vitoria fora (<span class="win">WIN Porto@1.53</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR18.05</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 21]</h4>
+        <ol>
+            <li>Benfica: 51 pts (21J 16V-3E-2D)</li>
+            <li>Porto: 50 pts (21J 15V-5E-1D)</li>
+            <li>Sp Lisbon: 41 pts (21J 12V-5E-4D)</li>
+            <li>Sp Braga: 38 pts (21J 11V-5E-5D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 22 - 17/02/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (51pts), Porto (50pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.73 vs Sp Braga | Porto@1.13 vs Tondela = Odd combinada: 1.95</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Sp Braga 5 x 1.73 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.73</span>)</li>
+            <li>Porto 1.13 x 23 Tondela → Vitoria casa (<span class="win">WIN Porto@1.13</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR19.55</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 22]</h4>
+        <ol>
+            <li>Benfica: 54 pts (22J 17V-3E-2D)</li>
+            <li>Porto: 53 pts (22J 16V-5E-1D)</li>
+            <li>Sp Lisbon: 44 pts (22J 13V-5E-4D)</li>
+            <li>Sp Braga: 38 pts (22J 11V-5E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 23 - 24/02/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (54pts), Porto (53pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.18 vs Chaves | Porto@1.36 vs Boavista = Odd combinada: 1.6</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.18 x 15 Chaves → Vitoria casa (<span class="win">WIN Benfica@1.18</span>)</li>
+            <li>Boavista 9.5 x 1.36 Porto → Vitoria fora (<span class="win">WIN Porto@1.36</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR16.05</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 23]</h4>
+        <ol>
+            <li>Benfica: 57 pts (23J 18V-3E-2D)</li>
+            <li>Porto: 56 pts (23J 17V-5E-1D)</li>
+            <li>Sp Lisbon: 47 pts (23J 14V-5E-4D)</li>
+            <li>Guimaraes: 39 pts (23J 11V-6E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 24 - 03/03/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (57pts), Porto (56pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.36 vs Feirense | Porto@1.13 vs Nacional = Odd combinada: 1.54</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Feirense 8 x 1.36 Benfica → Vitoria fora (<span class="win">WIN Benfica@1.36</span>)</li>
+            <li>Porto 1.13 x 19 Nacional → Vitoria casa (<span class="win">WIN Porto@1.13</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR15.37</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 24]</h4>
+        <ol>
+            <li>Benfica: 60 pts (24J 19V-3E-2D)</li>
+            <li>Porto: 59 pts (24J 18V-5E-1D)</li>
+            <li>Sp Lisbon: 48 pts (24J 14V-6E-4D)</li>
+            <li>Sp Braga: 42 pts (24J 12V-6E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 25 - 10/03/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p class="bet-info">[INFO] Usando Top 2: Benfica (60pts), Porto (59pts)</p>
+        <p><strong>[APOSTA FEITA]</strong> Benfica@1.18 vs Belenenses | Porto@1.25 vs Arouca = Odd combinada: 1.48</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <ul>
+            <li>Benfica 1.18 x 15 Belenenses → Vitoria casa (<span class="win">WIN Benfica@1.18</span>)</li>
+            <li>Arouca 13 x 1.25 Porto → Vitoria fora (<span class="win">WIN Porto@1.25</span>)</li>
+        </ul>
+        <p><strong>[RESULTADO] <span class="win">GANHOU</span> - Retorno: EUR14.75</strong></p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 25]</h4>
+        <ol>
+            <li>Benfica: 63 pts (25J 20V-3E-2D)</li>
+            <li>Porto: 62 pts (25J 19V-5E-1D)</li>
+            <li>Sp Lisbon: 51 pts (25J 15V-6E-4D)</li>
+            <li>Sp Braga: 43 pts (25J 12V-7E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 26 - 17/03/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 26]</h4>
+        <ol>
+            <li>Benfica: 64 pts (26J 20V-4E-2D)</li>
+            <li>Porto: 63 pts (26J 19V-6E-1D)</li>
+            <li>Sp Lisbon: 54 pts (26J 16V-6E-4D)</li>
+            <li>Sp Braga: 46 pts (26J 13V-7E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 27 - 31/03/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 27]</h4>
+        <ol>
+            <li>Benfica: 65 pts (27J 20V-5E-2D)</li>
+            <li>Porto: 64 pts (27J 19V-7E-1D)</li>
+            <li>Sp Lisbon: 57 pts (27J 17V-6E-4D)</li>
+            <li>Guimaraes: 47 pts (27J 13V-8E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 28 - 07/04/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 28]</h4>
+        <ol>
+            <li>Benfica: 68 pts (28J 21V-5E-2D)</li>
+            <li>Porto: 67 pts (28J 20V-7E-1D)</li>
+            <li>Sp Lisbon: 60 pts (28J 18V-6E-4D)</li>
+            <li>Guimaraes: 50 pts (28J 14V-8E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 29 - 14/04/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 29]</h4>
+        <ol>
+            <li>Benfica: 71 pts (29J 22V-5E-2D)</li>
+            <li>Porto: 68 pts (29J 20V-8E-1D)</li>
+            <li>Sp Lisbon: 63 pts (29J 19V-6E-4D)</li>
+            <li>Guimaraes: 53 pts (29J 15V-8E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 30 - 21/04/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 30]</h4>
+        <ol>
+            <li>Benfica: 72 pts (30J 22V-6E-2D)</li>
+            <li>Porto: 69 pts (30J 20V-9E-1D)</li>
+            <li>Sp Lisbon: 64 pts (30J 19V-7E-4D)</li>
+            <li>Guimaraes: 56 pts (30J 16V-8E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 31 - 28/04/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 31]</h4>
+        <ol>
+            <li>Benfica: 75 pts (31J 23V-6E-2D)</li>
+            <li>Porto: 72 pts (31J 21V-9E-1D)</li>
+            <li>Sp Lisbon: 67 pts (31J 20V-7E-4D)</li>
+            <li>Guimaraes: 59 pts (31J 17V-8E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 32 - 05/05/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 32]</h4>
+        <ol>
+            <li>Benfica: 78 pts (32J 24V-6E-2D)</li>
+            <li>Porto: 73 pts (32J 21V-10E-1D)</li>
+            <li>Sp Lisbon: 67 pts (32J 20V-7E-5D)</li>
+            <li>Guimaraes: 62 pts (32J 18V-8E-6D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 33 - 12/05/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 33]</h4>
+        <ol>
+            <li>Benfica: 81 pts (33J 25V-6E-2D)</li>
+            <li>Porto: 76 pts (33J 22V-10E-1D)</li>
+            <li>Sp Lisbon: 67 pts (33J 20V-7E-6D)</li>
+            <li>Guimaraes: 62 pts (33J 18V-8E-7D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="jornada-container">
+    <div class="jornada-header">JORNADA 34 - 20/05/2017</div>
+    <div class="left-panel">
+        <h4>[APOSTAS] Análise</h4>
+        <p><strong>[NAO APOSTA]</strong> Campeonato decidido</p>
+        <hr>
+        <h4>[RESULTADOS] Processando resultados</h4>
+        <p>Não houve apostas nesta jornada.</p>
+    </div>
+    <div class="right-panel">
+        <h4>[CLASSIFICAÇÃO ATUALIZADA - Após Jornada 34]</h4>
+        <ol>
+            <li>Benfica: 82 pts (34J 25V-7E-2D)</li>
+            <li>Porto: 76 pts (34J 22V-10E-2D)</li>
+            <li>Sp Lisbon: 70 pts (34J 21V-7E-6D)</li>
+            <li>Guimaraes: 62 pts (34J 18V-8E-8D)</li>
+        </ol>
+    </div>
+</div>
+
+<div class="report-summary">
+    <h2>CLASSIFICAÇÃO FINAL</h2>
+    <table class="final-results-table">
         <thead>
             <tr>
-                <th>Jornada</th>
-                <th>Apostas (Odds Combinadas)</th>
-                <th>Resultado</th>
-                <th>Retorno</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Benfica@1.3 | Sp Lisbon@1.22 | Porto@1.6 (2.54)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR25.38</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Benfica@1.17 | Sp Lisbon@1.4 | Porto@1.29 (2.11)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Benfica@1.45 | Sp Lisbon@1.29 | Porto@1.36 (2.54)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR25.44</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Benfica@1.55 | Sp Lisbon@1.57 | Porto@1.36 (3.31)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Benfica@1.44 | Sp Lisbon@1.17 (1.68)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR16.85</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Benfica@1.14 | Sp Lisbon@1.67 (1.9)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>Benfica@1.44 | Sp Lisbon@1.18 | Porto@1.18 (2.01)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Benfica@1.2 | Porto@1.29 (1.55)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>11</td>
-                <td>Benfica@1.17 | Sp Lisbon@1.33 | Porto@1.29 (2.01)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>12</td>
-                <td>Benfica@1.36 | Sp Lisbon@1.2 (1.63)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>14</td>
-                <td>Benfica@1.22 | Porto@1.17 (1.43)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR14.27</td>
-            </tr>
-            <tr>
-                <td>15</td>
-                <td>Benfica@1.2 | Porto@1.2 (1.44)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR14.4</td>
-            </tr>
-            <tr>
-                <td>16</td>
-                <td>Benfica@1.62 | Porto@1.36 (2.2)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>17</td>
-                <td>Benfica@1.14 | Porto@1.2 (1.37)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>18</td>
-                <td>Benfica@1.11 | Porto@1.25 (1.39)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR13.88</td>
-            </tr>
-            <tr>
-                <td>19</td>
-                <td>Benfica@1.33 | Porto@1.25 (1.66)</td>
-                <td><span class="bet-loss">PERDEU</span></td>
-                <td>EUR0</td>
-            </tr>
-            <tr>
-                <td>21</td>
-                <td>Benfica@1.18 | Porto@1.53 (1.81)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR18.05</td>
-            </tr>
-            <tr>
-                <td>22</td>
-                <td>Benfica@1.73 | Porto@1.13 (1.95)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR19.55</td>
-            </tr>
-            <tr>
-                <td>23</td>
-                <td>Benfica@1.18 | Porto@1.36 (1.6)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR16.05</td>
-            </tr>
-            <tr>
-                <td>24</td>
-                <td>Benfica@1.36 | Porto@1.13 (1.54)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR15.37</td>
-            </tr>
-            <tr>
-                <td>25</td>
-                <td>Benfica@1.18 | Porto@1.25 (1.48)</td>
-                <td><span class="bet-win">GANHOU</span></td>
-                <td>EUR14.75</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="summary-box summary-loss">
-        <h2>Resumo Financeiro</h2>
-        <p><strong>Total de apostas:</strong> 21</p>
-        <p><strong>Vitórias:</strong> 11 | <strong>Derrotas:</strong> 10</p>
-        <p><strong>Taxa de vitória:</strong> 52.38%</p>
-        <p><strong>Total investido:</strong> EUR210.00</p>
-        <p><strong>Total de retornos:</strong> EUR193.98</p>
-        <p class="loss"><strong>PREJUÍZO: EUR16.02</strong></p>
-    </div>
-
-    <h2>Tabela de Classificação Final</h2>
-    <table class="final-table">
-        <thead>
-            <tr>
-                <th>Posição</th>
+                <th>Pos.</th>
                 <th>Equipa</th>
-                <th>Pontos</th>
-                <th>Jogos</th>
-                <th>Vitórias</th>
-                <th>Empates</th>
-                <th>Derrotas</th>
+                <th>Pts</th>
+                <th>JJ</th>
+                <th>V</th>
+                <th>E</th>
+                <th>D</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Benfica</td>
-                <td>82</td>
-                <td>34</td>
-                <td>25</td>
-                <td>7</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Porto</td>
-                <td>76</td>
-                <td>34</td>
-                <td>22</td>
-                <td>10</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Sp Lisbon</td>
-                <td>70</td>
-                <td>34</td>
-                <td>21</td>
-                <td>7</td>
-                <td>6</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Guimaraes</td>
-                <td>62</td>
-                <td>34</td>
-                <td>18</td>
-                <td>8</td>
-                <td>8</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Sp Braga</td>
-                <td>54</td>
-                <td>34</td>
-                <td>15</td>
-                <td>9</td>
-                <td>10</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Maritimo</td>
-                <td>50</td>
-                <td>34</td>
-                <td>13</td>
-                <td>11</td>
-                <td>10</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Rio Ave</td>
-                <td>49</td>
-                <td>34</td>
-                <td>14</td>
-                <td>7</td>
-                <td>13</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>Feirense</td>
-                <td>48</td>
-                <td>34</td>
-                <td>14</td>
-                <td>6</td>
-                <td>14</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Boavista</td>
-                <td>43</td>
-                <td>34</td>
-                <td>10</td>
-                <td>13</td>
-                <td>11</td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td>Estoril</td>
-                <td>38</td>
-                <td>34</td>
-                <td>10</td>
-                <td>8</td>
-                <td>16</td>
-            </tr>
-            <tr>
-                <td>11</td>
-                <td>Setubal</td>
-                <td>38</td>
-                <td>34</td>
-                <td>10</td>
-                <td>8</td>
-                <td>16</td>
-            </tr>
-            <tr>
-                <td>12</td>
-                <td>Chaves</td>
-                <td>38</td>
-                <td>34</td>
-                <td>8</td>
-                <td>14</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>13</td>
-                <td>Belenenses</td>
-                <td>36</td>
-                <td>34</td>
-                <td>9</td>
-                <td>9</td>
-                <td>16</td>
-            </tr>
-            <tr>
-                <td>14</td>
-                <td>Pacos Ferreira</td>
-                <td>36</td>
-                <td>34</td>
-                <td>8</td>
-                <td>12</td>
-                <td>14</td>
-            </tr>
-            <tr>
-                <td>15</td>
-                <td>Moreirense</td>
-                <td>33</td>
-                <td>34</td>
-                <td>8</td>
-                <td>9</td>
-                <td>17</td>
-            </tr>
-            <tr>
-                <td>16</td>
-                <td>Arouca</td>
-                <td>32</td>
-                <td>34</td>
-                <td>9</td>
-                <td>5</td>
-                <td>20</td>
-            </tr>
-            <tr>
-                <td>17</td>
-                <td>Tondela</td>
-                <td>32</td>
-                <td>34</td>
-                <td>8</td>
-                <td>8</td>
-                <td>18</td>
-            </tr>
-            <tr>
-                <td>18</td>
-                <td>Nacional</td>
-                <td>21</td>
-                <td>34</td>
-                <td>4</td>
-                <td>9</td>
-                <td>21</td>
-            </tr>
+            <tr><td>1.</td><td>Benfica</td><td>82</td><td>34</td><td>25</td><td>7</td><td>2</td></tr>
+            <tr><td>2.</td><td>Porto</td><td>76</td><td>34</td><td>22</td><td>10</td><td>2</td></tr>
+            <tr><td>3.</td><td>Sp Lisbon</td><td>70</td><td>34</td><td>21</td><td>7</td><td>6</td></tr>
+            <tr><td>4.</td><td>Guimaraes</td><td>62</td><td>34</td><td>18</td><td>8</td><td>8</td></tr>
+            <tr><td>5.</td><td>Sp Braga</td><td>54</td><td>34</td><td>15</td><td>9</td><td>10</td></tr>
+            <tr><td>6.</td><td>Maritimo</td><td>50</td><td>34</td><td>13</td><td>11</td><td>10</td></tr>
+            <tr><td>7.</td><td>Rio Ave</td><td>49</td><td>34</td><td>14</td><td>7</td><td>13</td></tr>
+            <tr><td>8.</td><td>Feirense</td><td>48</td><td>34</td><td>14</td><td>6</td><td>14</td></tr>
+            <tr><td>9.</td><td>Boavista</td><td>43</td><td>34</td><td>10</td><td>13</td><td>11</td></tr>
+            <tr><td>10.</td><td>Estoril</td><td>38</td><td>34</td><td>10</td><td>8</td><td>16</td></tr>
+            <tr><td>11.</td><td>Setubal</td><td>38</td><td>34</td><td>10</td><td>8</td><td>16</td></tr>
+            <tr><td>12.</td><td>Chaves</td><td>38</td><td>34</td><td>8</td><td>14</td><td>12</td></tr>
+            <tr><td>13.</td><td>Belenenses</td><td>36</td><td>34</td><td>9</td><td>9</td><td>16</td></tr>
+            <tr><td>14.</td><td>Pacos Ferreira</td><td>36</td><td>34</td><td>8</td><td>12</td><td>14</td></tr>
+            <tr><td>15.</td><td>Moreirense</td><td>33</td><td>34</td><td>8</td><td>9</td><td>17</td></tr>
+            <tr><td>16.</td><td>Arouca</td><td>32</td><td>34</td><td>9</td><td>5</td><td>20</td></tr>
+            <tr><td>17.</td><td>Tondela</td><td>32</td><td>34</td><td>8</td><td>8</td><td>18</td></tr>
+            <tr><td>18.</td><td>Nacional</td><td>21</td><td>34</td><td>4</td><td>9</td><td>21</td></tr>
         </tbody>
     </table>
+</div>
+
+<div class="financial-summary">
+    <h2>RESUMO FINANCEIRO</h2>
+    <p><strong>Total de apostas:</strong> 21</p>
+    <p><strong>Vitórias:</strong> 11 | <strong>Derrotas:</strong> 10</p>
+    <p><strong>Taxa de vitória:</strong> 52.38%</p>
+    <p><strong>Total investido:</strong> EUR210.00</p>
+    <p><strong>Total de retornos:</strong> EUR193.98</p>
+    <p><strong>Resultado Final:</strong> <span class="loss">PREJUÍZO: EUR16.02</span></p>
 </div>
 
 </body>
