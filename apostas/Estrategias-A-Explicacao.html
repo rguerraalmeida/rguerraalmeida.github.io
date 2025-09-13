@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Sistemas de Apostas em Futebol Europeu – Odds Decimais</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;line-height:1.6;margin:20px;}
+  h1{color:#2c3e50;border-bottom:2px solid #ecf0f1;padding-bottom:5px;}
+  h2{color:#2980b9;margin-top:30px;}
+  table{border-collapse:collapse;width:100%;margin-top:10px;}
+  th,td{border:1px solid #bdc3c7;padding:8px;text-align:center;}
+  th{background:#ecf0f1;}
+  code{background:#f5f5f5;padding:2px 4px;border-radius:3px;}
+</style>
+</head>
+
+<body>
+<h1>Sistemas de Apostas em Futebol Europeu – Odds Decimais</h1>
+
+<p>Os quatro sistemas mais conhecidos entre apostadores são o <strong>Martingale</strong>, o <strong>Paroli</strong>, o <strong>Labouchere</strong> e a <strong>Critério Kelly</strong>. Abaixo apresentamos uma breve descrição de cada um, seguida de exemplos práticos aplicados a odds decimais típicas de apostas futebolísticas (ex.: 1.75 – 3.00 – 7.00).</p>
+
+<!-- Martingale -->
+<h2>Martingale (Doubler após perda)</h2>
+<p>O Martingale é um sistema de “dobro” que pressupõe que, ao dobrar a aposta depois de cada perda, o próximo ganho recupera todas as perdas anteriores mais um lucro igual à primeira aposta. É ideal em jogos de soma zero com probabilidade ½/½ (ex.: cara ou coroa), mas pode ser usado em apostas repetidas no mesmo tipo de evento.</p>
+
+<p><strong>Exemplo:</strong> Aposte sempre na vitória da equipa local, odds = <code>1.75</code>. Base: <code>€10</code>, bankroll inicial = <code>€1 000</code>.</p>
+<table>
+  <tr><th>Rodada</th><th>Aposta (€)</th><th>Resultado</th><th>Bankroll (€)</th></tr>
+  <tr><td>1</td><td>10</td><td>Perda</td><td>990</td></tr>
+  <tr><td>2</td><td>20</td><td>Perda</td><td>970</td></tr>
+  <tr><td>3</td><td>40</td><td>Vitória (1.75)</td><td>1010</td></tr>
+</table>
+
+<p>No terceiro jogo, a vitória devolve <code>€70</code> (10 × (1.75–1)), cobrindo as perdas de €30 e deixando um lucro de €10.</p>
+
+<!-- Paroli -->
+<h2>Paroli (Reverso do Martingale)</h2>
+<p>No Paroli, a aposta aumenta apenas depois de uma vitória. Se perder, volta ao valor inicial. O objetivo é aproveitar sequências vencedoras sem arriscar grandes somas em perdas consecutivas.</p>
+
+<p><strong>Exemplo:</strong> Base = <code>€10</code>, odds = <code>1.75</code>.</p>
+<table>
+  <tr><th>Rodada</th><th>Aposta (€)</th><th>Resultado</th><th>Bankroll (€)</th></tr>
+  <tr><td>1</td><td>10</td><td>Perda</td><td>990</td></tr>
+  <tr><td>2</td><td>10</td><td>Vitória</td><td>1000 + 7,5 = 1007,5</td></tr>
+  <tr><td>3</td><td>20</td><td>Vitória</td><td>1024,25</td></tr>
+  <tr><td>4</td><td>40</td><td>Perda</td><td>984,25</td></tr>
+</table>
+
+<p>Observe que o lucro máximo ocorre quando se obtém uma sequência de vitórias.</p>
+
+<!-- Labouchere -->
+<h2>Labouchere (Soma de Sequência)</h2>
+<p>No Labouchere, escolhe‑se uma lista de números (unidades). A aposta é a soma do primeiro e último número da lista. Se vencer, remove esses dois números; se perder, adiciona a aposta ao final.</p>
+
+<p><strong>Exemplo:</strong> Lista = <code>[2, 4, 6]</code>, unidade = <code>€10</code>. Odds = <code>1.75</code>.</p>
+<table>
+  <tr><th>Rodada</th><th>Lista Atual (unidades)</th><th>Aposta (€)</th><th>Resultado</th><th>Lista Pós‑resultado</th></tr>
+  <tr><td>1</td><td>[2,4,6]</td><td>(2+6)×10=80</td><td>Vitória</td><td>[4]</td></tr>
+  <tr><td>2</td><td>[4]</td><td>(4+4)×10=80</td><td>Perda</td><td>[4,8]</td></tr>
+  <tr><td>3</td><td>[4,8]</td><td>(4+8)×10=120</td><td>Vitória</td><td>[8]</td></tr>
+</table>
+
+<p>O objetivo é “esvaziar” a lista; cada vitória elimina números e reduz o risco nas próximas apostas.</p>
+
+<!-- Kelly Criterion -->
+<h2>Critério Kelly (Aposta Fracionária)</h2>
+<p>O Critério Kelly determina a fração ótima da banca a apostar com base na sua vantagem estimada. A fórmula para odds decimais é:</p>
+<pre>
+f* = (b × p – q) / b
+onde:
+b = odds – 1          (lucro líquido por unidade apostada)
+p = probabilidade de ganhar
+q = 1 – p
+</pre>
+
+<p><strong>Exemplo 1 – Vantagem moderada:</strong></p>
+<ul>
+<li>Probabilidade estimada de vitória da equipa local: <code>60 % (p=0.6)</code>.</li>
+<li>Odds decimais: <code>1.75</code>, logo <code>b = 0.75</code>.</li>
+<li>q = 0,4.</li>
+<li><strong>f*</strong> = (0,75 × 0,6 – 0,4) / 0,75 ≈ 0,0667 → 6,67 % da banca.</li>
+</ul>
+
+<p>Com uma banca de <code>€1 000</code>, a aposta recomendada é <code>≈ €66,70</code>. Se vencer, o lucro será <code>€66,70 × (1.75–1) = €50,03</code>, deixando <code>€1 050,73</code>.</p>
+
+<p><strong>Exemplo 2 – Vantagem alta:</strong></p>
+<ul>
+<li>Probabilidade estimada: <code>80 % (p=0.8)</code>.</li>
+<li>Odds = <code>3.00</code>, então <code>b = 2.00</code>.</li>
+<li><strong>f*</strong> = (2 × 0,8 – 0,2) / 2 = 0,7 → 70 % da banca.</li>
+</ul>
+
+<p>Com a mesma banca de <code>€1 000</code>, apostar <code>€700</code>. Se vencer, o lucro será <code>€700 × (3 – 1) = €1 400</code>, resultando em <code>€2 100</code>.</p>
+
+<p><strong>Atenção:</strong> O Critério Kelly supõe que a probabilidade estimada é correta. Se a sua avaliação for imprecisa, o risco de perdas aumenta significativamente.</p>
+
+<!-- Conclusão -->
+<h2>Resumo e Considerações Finais</h2>
+<ul>
+  <li>O Martingale pode gerar grandes perdas rapidamente se ocorrerem muitas derrotas consecutivas.</li>
+  <li>Paroli reduz a exposição a sequências perdedoras, mas depende de vitórias consecutivas para maximizar ganhos.</li>
+  <li>Labouchere oferece controle sobre o tamanho das apostas, porém requer disciplina para seguir a sequência.</li>
+  <li>Critério Kelly é matematicamente sólido quando as probabilidades são confiáveis; ainda assim exige gestão cuidadosa da banca.</li>
+</ul>
+
+<p>Em apostas de futebol, onde cada evento tem odds diferentes e não há garantia de repetição do mesmo cenário, todos esses sistemas devem ser usados com cautela. A melhor estratégia continua sendo a <strong>gestão disciplinada da banca</strong> e a <strong>avaliação realista das probabilidades</strong>.</p>
+
+</body>
+</html>
