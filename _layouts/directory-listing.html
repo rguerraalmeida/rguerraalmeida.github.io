@@ -3,10 +3,13 @@ layout: default
 ---
 <h1>Directory Listing</h1>
 <ul>
-  {% for file in site.static_files %}
-    {% comment %} Check if the file is in the current directory {% endcomment %}
-    {% assign current_dir = page.dir | append: file.basename %}
-    {% if file.path contains page.dir and file.path != page.path %}
+  {% assign current_dir = page.dir %}
+  {% assign sorted_files = site.static_files | where:"dir", current_dir | sort: "basename" %}
+  {% assign files_to_ignore = "temp-file,data-file,private-document" | split: "," %}
+
+  {% for file in sorted_files %}
+    {% comment %} Check if the file is not the index.html and is not in our ignore list {% endcomment %}
+    {% if file.basename != "index" and files_to_ignore contains file.basename == false %}
       <li>
         <a href="{{ file.path | relative_url }}">{{ file.basename }}{{ file.ext }}</a>
       </li>
