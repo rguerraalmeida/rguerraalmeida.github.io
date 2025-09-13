@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Estratégia Liga NOS Top 2 Dinâmica - Sistema PAROLI</title>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #0984e3;
+    }
+    h2 {
+      margin-top: 40px;
+      color: #2c3e50;
+      border-left: 5px solid #0984e3;
+      padding-left: 10px;
+    }
+    pre {
+      background: #2d3436;
+      color: #dfe6e9;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    ul {
+      margin: 15px 0;
+      padding-left: 25px;
+    }
+    li {
+      margin: 6px 0;
+    }
+    .highlight {
+      background: #dff9fb;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      font-weight: bold;
+      color: #0984e3;
+    }
+    .summary {
+      background: #ecf9f3;
+      border-left: 6px solid #27ae60;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Estratégia de Apostas Liga NOS - Top 2 Dinâmica (Sistema PAROLI)</h1>
+
+    <h2>Resumo</h2>
+    <div class="summary">
+      ✅ Resumindo:  
+      A estratégia aposta múltiplas de 10€ por jornada, começando nos 3 grandes e adaptando-se dinamicamente para o Top 2 quando claro.  
+      Evita jogos de confronto direto ou contra outros grandes, respeita odds mínimas, e para quando o campeão fica decidido matematicamente.  
+      O sistema **PAROLI** é aplicado: após cada vitória a aposta sobe progressivamente (10 → 20 → 30) até atingir o limite definido, reiniciando no caso de derrota ou ao fim da sequência.
+    </div>
+
+    <h2>Descrição Detalhada</h2>
+    <ul>
+      <li><span class="highlight">Valor base da aposta:</span> 10€ por múltipla.</li>
+      <li><span class="highlight">Odds mínimas:</span> 1.25 (odd combinada).</li>
+      <li><span class="highlight">Critério inicial:</span> até à jornada 3, aposta sempre nos <strong>3 grandes</strong> (Benfica, Sporting, Porto).</li>
+      <li><span class="highlight">A partir da jornada 4:</span>
+        <ul>
+          <li>Se a classificação for insuficiente ou houver empate no top 3 → aposta nos <strong>3 grandes</strong>.</li>
+          <li>Se a classificação for clara → aposta apenas no <strong>Top 2</strong>.</li>
+        </ul>
+      </li>
+      <li><span class="highlight">Conflitos:</span>
+        <ul>
+          <li>Jogos entre equipas selecionadas (confronto direto) → excluídas.</li>
+          <li>Jogos contra um dos 3 grandes fora da seleção → excluídas.</li>
+        </ul>
+      </li>
+      <li>São necessárias pelo menos <strong>2 equipas válidas</strong> para apostar.</li>
+      <li>Se faltar odd ou a odd for inválida → não há aposta.</li>
+      <li><span class="highlight">Fim de campeonato:</span> a partir da jornada 25 verifica-se se o 1º lugar está matematicamente decidido; se sim, param as apostas.</li>
+      <li><span class="highlight">Sistema PAROLI:</span>
+        <ul>
+          <li>Progressão positiva até 3 níveis: 10€ → 20€ → 30€.</li>
+          <li>Após cada vitória, sobe um nível.</li>
+          <li>Ao atingir o nível máximo ou em caso de derrota, reinicia no valor base (10€).</li>
+          <li>Conta streaks de vitórias e níveis atingidos para estatísticas finais.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>Fluxograma</h2>
+    <pre>
+Início ──► Jornada ≤ 3 ? ──► Sim ─► Apostar Big 3
+                  │
+                  Não
+                  │
+        Classificação suficiente ?
+             │Sim             │Não
+             ▼                ▼
+    Empate Top 3 ?           Apostar Big 3
+     │Sim       │Não
+     ▼          ▼
+ Apostar Big 3  Apostar Top 2
+                  │
+      ┌─────────────────────────┐
+      │ Verificar conflitos     │
+      └──────────┬──────────────┘
+                 │
+      Restam ≥ 2 equipas ?
+             │Sim       │Não
+             ▼          ▼
+       Validar Odds    Não aposta
+             │
+     Odds combinadas ≥ min ?
+             │Sim       │Não
+             ▼          ▼
+         Apostar     Não aposta
+             │
+             ▼
+     ┌───────────────────────────┐
+     │ Sistema PAROLI            │
+     │ Se vitória → aumentar nível│
+     │ Se derrota → reset para 10 │
+     └───────────────────────────┘
+    </pre>
+  </div>
+</body>
+</html>
