@@ -3,12 +3,12 @@ layout: default
 ---
 <h1>Directory Listing</h1>
 <ul>
-  {% for item in site.static_files %}
+  {% for file in site.static_files %}
     {% comment %} Check if the file is in the current directory {% endcomment %}
-    {% assign current_dir_path = page.url | append: '/' %}
-    {% if item.path contains current_dir_path %}
+    {% assign current_dir = page.dir | append: file.basename %}
+    {% if file.path contains page.dir and file.path != page.path %}
       <li>
-        <a href="{{ item.path | relative_url }}">{{ item.path | remove_first: current_dir_path }}</a>
+        <a href="{{ file.path | relative_url }}">{{ file.basename }}{{ file.ext }}</a>
       </li>
     {% endif %}
   {% endfor %}
