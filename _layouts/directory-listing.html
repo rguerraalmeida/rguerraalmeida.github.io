@@ -1,0 +1,15 @@
+---
+layout: default
+---
+<h1>Directory Listing</h1>
+<ul>
+  {% for item in site.static_files %}
+    {% comment %} Check if the file is in the current directory {% endcomment %}
+    {% assign current_dir_path = page.url | append: '/' %}
+    {% if item.path contains current_dir_path %}
+      <li>
+        <a href="{{ item.path | relative_url }}">{{ item.path | remove_first: current_dir_path }}</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
