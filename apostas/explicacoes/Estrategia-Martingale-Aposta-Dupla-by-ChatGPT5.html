@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise da Estratégia Martingale Modificada</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        h1 {
+            border-bottom: 3px solid #3498db;
+            text-align: center;
+        }
+        h2 {
+            font-size: 1.5em;
+        }
+        strong {
+            color: #e74c3c;
+        }
+        .prompt {
+            background-color: #ecf0f1;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        .analysis-section {
+            padding-top: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .warning {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .math {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #fafafa;
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Análise da Estratégia Martingale Modificada</h1>
+
+    <div class="prompt">
+        <h2>O Prompt</h2>
+        <p>Imagine um cenário de apostas em futebol onde você emprega uma estratégia de <strong>Martingale modificada</strong> com um saldo bancário infinito. O seu objetivo é garantir um lucro consistente de <strong>10€</strong> em cada ronda de apostas bem-sucedida. Em vez de apostar num único resultado, você aposta em dois dos três resultados possíveis numa partida em simultâneo:</p>
+        <ul>
+            <li>Uma <strong>vitória para a equipa favorita</strong>.</li>
+            <li>Um <strong>empate ou vitória para a equipa menos favorita</strong>.</li>
+        </ul>
+        <p>Assumindo que as odds decimais são fornecidas para todos os três resultados (Vitória do Favorito, Empate, Vitória do Menos Favorito), pode analisar matematicamente e responder às seguintes questões?</p>
+        <ul>
+            <li>Como calcularia o valor exato a apostar em cada um dos dois resultados escolhidos para garantir um lucro de 10€ se qualquer uma das apostas vencer?</li>
+            <li>Qual é a probabilidade de um resultado perdedor neste cenário de aposta dupla?</li>
+            <li>Descreva o lucro/prejuízo para todos os resultados possíveis do jogo.</li>
+            <li>Mesmo com um saldo bancário infinito, esta estratégia tem garantia de ser lucrativa a longo prazo? Explique o seu raciocínio, focando nos princípios fundamentais das apostas e das odds das casas de apostas.</li>
+            <li>Por fim, identifique pelo menos dois fatores do mundo real que tornariam esta estratégia inviável.</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <div class="analysis-section">
+        <h2>Análise da Estratégia</h2>
+        <p class="warning">Não, esta estratégia não tem garantia de ser lucrativa a longo prazo, mesmo com um saldo bancário infinito.</p>
+        <p>A razão fundamental é que as odds das casas de apostas são cuidadosamente calibradas para garantir uma margem de lucro embutida, conhecida como o <strong>"vig"</strong>. Esta margem significa que as probabilidades combinadas de todos os resultados numa partida, conforme implícito nas odds, somam sempre mais de 100%.</p>
+
+        <h3>Cálculo dos Valores da Aposta</h3>
+        <p>Vamos assumir as seguintes odds decimais para um determinado jogo:</p>
+        <ul>
+            <li><strong>Odds para a Vitória do Favorito (<span class="math">O<sub>F</sub></span>):</strong> 1,50</li>
+            <li><strong>Odds para o Empate (<span class="math">O<sub>E</sub></span>):</strong> 4,00</li>
+            <li><strong>Odds para a Vitória do Menos Favorito (<span class="math">O<sub>M</sub></span>):</strong> 6,50</li>
+        </ul>
+        <p>A estratégia é apostar na Vitória do Favorito e no Empate. As fórmulas para os valores da aposta (<span class="math">B<sub>F</sub></span> e <span class="math">B<sub>E</sub></span>) para garantir um lucro de 10€ são:</p>
+        <ul>
+            <li>Se o Favorito Vence: <span class="math">(B<sub>F</sub> &times; O<sub>F</sub>) = (B<sub>F</sub> + B<sub>E</sub>) + 10</span></li>
+            <li>Se Empate: <span class="math">(B<sub>E</sub> &times; O<sub>E</sub>) = (B<sub>F</sub> + B<sub>E</sub>) + 10</span></li>
+        </ul>
+
+        <h3>Probabilidade de um Resultado Perdedor</h3>
+        <p>A probabilidade de um resultado perdedor é a probabilidade do único resultado em que não apostou. No nosso exemplo, em que aposta na Vitória do Favorito e no Empate, o único resultado perdedor é a <strong>Vitória do Menos Favorito</strong>. A probabilidade implícita da casa de apostas para este evento é <span class="math">1/O<sub>M</sub> = 1/6,50 ≈ 0,154</span> ou 15,4%.</p>
+
+        <h3>Análise de Lucro/Prejuízo</h3>
+        <ul>
+            <li><strong>Cenário 1: Favorito Vence</strong> - Lucro.</li>
+            <li><strong>Cenário 2: Empate</strong> - Lucro.</li>
+            <li><strong>Cenário 3: Menos Favorito Vence</strong> - <strong>Prejuízo total</strong> de toda a aposta.</li>
+        </ul>
+
+        <h3>Rentabilidade Garantida com Saldo Infinito?</h3>
+        <p>Mesmo com um saldo bancário infinito, a estratégia <strong>não é garantida</strong>. O defeito principal é o <strong>"overround"</strong> ou <strong>"vig"</strong> embutido da casa de apostas. Usando o nosso exemplo, a soma das probabilidades implícitas é:</p>
+        <p class="math">1/1,50 + 1/4,00 + 1/6,50 = 66,7% + 25,0% + 15,4% = 107,1%</p>
+        <p>Cada aposta que faz tem um <strong>valor esperado negativo</strong>. O Martingale apenas atrasa o resultado final, mas não pode mudar a realidade matemática subjacente de uma proposta perdedora. Um saldo bancário infinito impede que uma má sequência o elimine, mas não altera o resultado a longo prazo.</p>
+
+        <h3>Limitações no Mundo Real</h3>
+        <ol>
+            <li><strong>Limites de Aposta:</strong> As casas de apostas impõem <strong>limites máximos de aposta</strong>. No sistema Martingale, o valor da aposta cresce exponencialmente, fazendo com que rapidamente atinja estes limites e não consiga continuar a sua sequência.</li>
+            <li><strong>Odds em Mudança:</strong> As odds não são estáticas e mudam com base em diversos fatores. Esta volatilidade torna impossível fazer os cálculos precisos necessários, pois as odds podem mudar entre o momento em que faz as suas duas apostas.</li>
+        </ol>
+    </div>
+
+</div>
+
+</body>
+</html>
