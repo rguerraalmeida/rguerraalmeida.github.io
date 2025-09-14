@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise da Estratégia Martingale Modificada</title>
+    <title>Análise da Estratégia Martingale com Apostas Contrariadas</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -56,11 +56,12 @@
         .warning {
             color: #e74c3c;
             font-weight: bold;
+            font-size: 1.1em;
         }
         .math {
             font-family: 'Courier New', Courier, monospace;
             background-color: #fafafa;
-            padding: 5px;
+            padding: 2px 5px;
             border-radius: 3px;
         }
     </style>
@@ -69,22 +70,23 @@
 
 <div class="container">
 
-    <h1>Análise da Estratégia Martingale Modificada</h1>
+    <h1>Análise da Estratégia Martingale com Apostas Contrariadas</h1>
 
     <div class="prompt">
         <h2>O Prompt</h2>
-        <p>Imagine um cenário de apostas em futebol onde você emprega uma estratégia de <strong>Martingale modificada</strong> com um saldo bancário infinito. O seu objetivo é garantir um lucro consistente de <strong>10€</strong> em cada ronda de apostas bem-sucedida. Em vez de apostar num único resultado, você aposta em dois dos três resultados possíveis numa partida em simultâneo:</p>
+        <p>Imagine um cenário de apostas em futebol onde você emprega uma estratégia de <strong>Martingale modificada</strong> com um saldo bancário infinito. O seu objetivo é garantir um lucro consistente de <strong>10€</strong> em cada ronda de apostas bem-sucedida. Em vez de apostar num único resultado, você aposta em dois resultados contrários que cobrem todos os cenários possíveis de um jogo (Vitória da Casa, Empate, Vitória do Visitante).</p>
+        <p>A sua estratégia consiste em fazer as seguintes duas apostas em simultâneo:</p>
         <ul>
-            <li>Uma <strong>vitória para a equipa favorita</strong>.</li>
-            <li>Um <strong>empate ou vitória para a equipa menos favorita</strong>.</li>
+            <li><strong>Aposta 1:</strong> Vitória da Equipa da Casa.</li>
+            <li><strong>Aposta 2:</strong> Empate ou Vitória da Equipa Visitante (aposta de Hipótese Dupla).</li>
         </ul>
-        <p>Assumindo que as odds decimais são fornecidas para todos os três resultados (Vitória do Favorito, Empate, Vitória do Menos Favorito), pode analisar matematicamente e responder às seguintes questões?</p>
+        <p>Assumindo que as odds decimais são fornecidas, pode analisar matematicamente e responder às seguintes questões?</p>
         <ul>
-            <li>Como calcularia o valor exato a apostar em cada um dos dois resultados escolhidos para garantir um lucro de 10€ se qualquer uma das apostas vencer?</li>
-            <li>Qual é a probabilidade de um resultado perdedor neste cenário de aposta dupla?</li>
-            <li>Descreva o lucro/prejuízo para todos os resultados possíveis do jogo.</li>
-            <li>Mesmo com um saldo bancário infinito, esta estratégia tem garantia de ser lucrativa a longo prazo? Explique o seu raciocínio, focando nos princípios fundamentais das apostas e das odds das casas de apostas.</li>
-            <li>Por fim, identifique pelo menos dois fatores do mundo real que tornariam esta estratégia inviável.</li>
+            <li>Como calcularia o valor exato a apostar em cada um dos dois resultados para garantir um lucro de 10€ se qualquer uma das apostas vencer?</li>
+            <li>Embora uma das suas apostas garanta a vitória, esta estratégia tem garantia de ser lucrativa a longo prazo, mesmo com um saldo bancário infinito?</li>
+            <li>Descreva o lucro/prejuízo para cada resultado possível do jogo.</li>
+            <li>Explique por que razão, do ponto de vista matemático, esta estratégia falhará a longo prazo, focando no princípio do <strong>"vig"</strong> das casas de apostas.</li>
+            <li>Identifique pelo menos dois fatores do mundo real que tornariam esta estratégia inviável.</li>
         </ul>
     </div>
 
@@ -92,41 +94,38 @@
 
     <div class="analysis-section">
         <h2>Análise da Estratégia</h2>
-        <p class="warning">Não, esta estratégia não tem garantia de ser lucrativa a longo prazo, mesmo com um saldo bancário infinito.</p>
-        <p>A razão fundamental é que as odds das casas de apostas são cuidadosamente calibradas para garantir uma margem de lucro embutida, conhecida como o <strong>"vig"</strong>. Esta margem significa que as probabilidades combinadas de todos os resultados numa partida, conforme implícito nas odds, somam sempre mais de 100%.</p>
+        <p class="warning">A sua estratégia não é lucrativa a longo prazo, mesmo com um saldo bancário infinito.</p>
+        <p>Apesar de uma das suas apostas ter a vitória garantida, a razão pela qual a estratégia falha é a existência da <strong>margem de lucro da casa de apostas</strong>, conhecida como <strong>"vig"</strong> ou **"overround"**. Esta margem é matematicamente embutida nas odds e assegura que, a longo prazo, a casa de apostas sempre terá a vantagem.</p>
 
-        <h3>Cálculo dos Valores da Aposta</h3>
-        <p>Vamos assumir as seguintes odds decimais para um determinado jogo:</p>
+        <h3>O Problema do "Vig" em Apostas Contrariadas</h3>
+        <p>Para que a sua estratégia fosse lucrativa, a soma das probabilidades implícitas de ambas as suas apostas teria de ser igual ou inferior a 100%. No entanto, isto nunca acontece no mundo real das apostas desportivas.</p>
+        
+        <p>Vamos usar o seu exemplo fictício para ilustrar o problema:</p>
         <ul>
-            <li><strong>Odds para a Vitória do Favorito (<span class="math">O<sub>F</sub></span>):</strong> 1,50</li>
-            <li><strong>Odds para o Empate (<span class="math">O<sub>E</sub></span>):</strong> 4,00</li>
-            <li><strong>Odds para a Vitória do Menos Favorito (<span class="math">O<sub>M</sub></span>):</strong> 6,50</li>
-        </ul>
-        <p>A estratégia é apostar na Vitória do Favorito e no Empate. As fórmulas para os valores da aposta (<span class="math">B<sub>F</sub></span> e <span class="math">B<sub>E</sub></span>) para garantir um lucro de 10€ são:</p>
-        <ul>
-            <li>Se o Favorito Vence: <span class="math">(B<sub>F</sub> &times; O<sub>F</sub>) = (B<sub>F</sub> + B<sub>E</sub>) + 10</span></li>
-            <li>Se Empate: <span class="math">(B<sub>E</sub> &times; O<sub>E</sub>) = (B<sub>F</sub> + B<sub>E</sub>) + 10</span></li>
+            <li><strong>Odds para a Vitória da Equipa da Casa:</strong> 1.30</li>
+            <li><strong>Odds para Empate ou Vitória da Equipa Visitante:</strong> 2.50</li>
         </ul>
 
-        <h3>Probabilidade de um Resultado Perdedor</h3>
-        <p>A probabilidade de um resultado perdedor é a probabilidade do único resultado em que não apostou. No nosso exemplo, em que aposta na Vitória do Favorito e no Empate, o único resultado perdedor é a <strong>Vitória do Menos Favorito</strong>. A probabilidade implícita da casa de apostas para este evento é <span class="math">1/O<sub>M</sub> = 1/6,50 ≈ 0,154</span> ou 15,4%.</p>
-
-        <h3>Análise de Lucro/Prejuízo</h3>
+        <p>Agora, vamos converter estas odds em probabilidades implícitas:</p>
         <ul>
-            <li><strong>Cenário 1: Favorito Vence</strong> - Lucro.</li>
-            <li><strong>Cenário 2: Empate</strong> - Lucro.</li>
-            <li><strong>Cenário 3: Menos Favorito Vence</strong> - <strong>Prejuízo total</strong> de toda a aposta.</li>
+            <li>Probabilidade Implícita (Vitória da Casa) = <span class="math">1 / 1.30 = 0.769</span> ou <strong>76.9%</strong></li>
+            <li>Probabilidade Implícita (Empate ou Vitória Visitante) = <span class="math">1 / 2.50 = 0.400</span> ou <strong>40.0%</strong></li>
         </ul>
 
-        <h3>Rentabilidade Garantida com Saldo Infinito?</h3>
-        <p>Mesmo com um saldo bancário infinito, a estratégia <strong>não é garantida</strong>. O defeito principal é o <strong>"overround"</strong> ou <strong>"vig"</strong> embutido da casa de apostas. Usando o nosso exemplo, a soma das probabilidades implícitas é:</p>
-        <p class="math">1/1,50 + 1/4,00 + 1/6,50 = 66,7% + 25,0% + 15,4% = 107,1%</p>
-        <p>Cada aposta que faz tem um <strong>valor esperado negativo</strong>. O Martingale apenas atrasa o resultado final, mas não pode mudar a realidade matemática subjacente de uma proposta perdedora. Um saldo bancário infinito impede que uma má sequência o elimine, mas não altera o resultado a longo prazo.</p>
+        <p>Para perceber a margem da casa de apostas, somamos estas probabilidades:</p>
+        <p class="math">Soma das Probabilidades = 76.9% + 40.0% = 116.9%</p>
+
+        <p>Este valor de 116.9% é o **"overround"**. A diferença entre 116.9% e 100% é a margem de lucro da casa de apostas. Por cada 116.9€ apostados neste mercado, a casa de apostas paga apenas 100€ em prémios. Isto garante uma perda líquida para os apostadores ao longo do tempo.</p>
+
+        <h3>Cálculo de Lucro/Prejuízo e as Apostas</h3>
+        <p>Independentemente de como faz os cálculos para a sua aposta Martingale, o **total que aposta será sempre superior ao total que recebe** quando uma das apostas ganha. A margem da casa de apostas impede que o retorno de uma aposta vencedora cubra o custo total de ambas as apostas.</p>
+        
+        <p>O sistema Martingale, que consiste em dobrar a aposta após uma perda, apenas prolonga o inevitável. Mesmo com um saldo infinito, você continuaria a aumentar o valor das suas apostas, mas a cada ronda, estaria a perder uma pequena percentagem do dinheiro total apostado devido ao "vig". A longo prazo, esta perda acumulada levaria a um prejuízo substancial.</p>
 
         <h3>Limitações no Mundo Real</h3>
         <ol>
-            <li><strong>Limites de Aposta:</strong> As casas de apostas impõem <strong>limites máximos de aposta</strong>. No sistema Martingale, o valor da aposta cresce exponencialmente, fazendo com que rapidamente atinja estes limites e não consiga continuar a sua sequência.</li>
-            <li><strong>Odds em Mudança:</strong> As odds não são estáticas e mudam com base em diversos fatores. Esta volatilidade torna impossível fazer os cálculos precisos necessários, pois as odds podem mudar entre o momento em que faz as suas duas apostas.</li>
+            <li><strong>Limites de Aposta:</strong> As casas de apostas impõem **limites máximos de aposta** para se protegerem. A natureza exponencial do Martingale faria com que atingisse rapidamente esses limites, impedindo-o de continuar a sua sequência para tentar recuperar os prejuízos.</li>
+            <li><strong>Variação das Odds:</strong> As odds mudam constantemente em tempo real, dificultando a aplicação precisa desta estratégia. As odds podem ser ajustadas por segundos, e a janela para fazer as duas apostas a um valor que compense pode simplesmente não existir.</li>
         </ol>
     </div>
 
