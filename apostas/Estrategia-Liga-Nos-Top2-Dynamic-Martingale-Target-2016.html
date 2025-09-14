@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estratégia Liga NOS Top 2 Dynamic TARGET-MARTINGALE - 2016</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 30px 0 20px 0;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid #74b9ff;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .target-info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #1565c0;
+            font-weight: 600;
+        }
+
+        .formula-display {
+            background: #e8f5e8;
+            border: 2px dashed #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #2e7d32;
+            margin: 15px 0;
+        }
+
+        .jornada-container {
+            margin-bottom: 40px;
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            padding: 30px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            box-shadow: 0 8px 25px rgba(116, 185, 255, 0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .jornada-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(116, 185, 255, 0.25);
+        }
+
+        .jornada-header {
+            width: 100%;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #74b9ff;
+            border-bottom: 3px solid #74b9ff;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bets-section, .standings-section {
+            flex: 1;
+            min-width: 350px;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e3f2fd;
+        }
+
+        .bets-section {
+            border-left: 4px solid #2196f3;
+        }
+
+        .standings-section {
+            border-left: 4px solid #ff9800;
+        }
+
+        .bets-section h3, .standings-section h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .bets-section h3 {
+            color: #2196f3;
+        }
+
+        .standings-section h3 {
+            color: #ff9800;
+        }
+
+        .final-summary {
+            margin-top: 60px;
+            border-top: 3px solid #74b9ff;
+            padding-top: 40px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.8;
+            border: 1px solid #e3f2fd;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .summary-block {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border: 2px solid #e3f2fd;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(116, 185, 255, 0.1);
+        }
+
+        /* Bet Result Styling */
+        .bet-outcome-win {
+            color: #4caf50;
+            font-weight: 700;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .bet-outcome-loss {
+            color: #f44336;
+            font-weight: 700;
+            background: rgba(244, 67, 54, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .bet-result-win {
+            background: linear-gradient(135deg, #66bb6a, #4caf50);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .bet-result-loss {
+            background: linear-gradient(135deg, #ef5350, #f44336);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .match-result {
+            font-weight: 500;
+            color: #34495e;
+        }
+
+        .game-result {
+            font-weight: 600;
+            color: #2c3e50;
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        strong {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .jornada-container {
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .bets-section, .standings-section {
+                min-width: 100%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .jornada-header {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation for bet results */
+        .bet-result-win, .bet-result-loss {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Table Styles */
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(116, 185, 255, 0.1);
+        }
+
+        .standings-table th {
+            background: #74b9ff;
+            color: white;
+            font-weight: 600;
+            padding: 12px 8px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .standings-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e3f2fd;
+            color: #2c3e50;
+        }
+
+        .standings-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .standings-table tr:hover {
+            background: #e3f2fd;
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        .standings-table .position {
+            font-weight: 700;
+            color: #74b9ff;
+            text-align: center;
+            width: 40px;
+        }
+
+        .standings-table .team-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .standings-table .points {
+            font-weight: 700;
+            color: #ff9800;
+            text-align: center;
+        }
+
+        .standings-table .games {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .financial-profit {
+            color: #4caf50;
+            font-weight: 700;
+        }
+
+        .financial-loss {
+            color: #f44336;
+            font-weight: 700;
+        }
+
+        .target-highlight {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c8);
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Análise de Apostas da Liga NOS TARGET-MARTINGALE - Época 2016/2017</h1>
+        <div class="intro-section">
+            <p><strong>Estratégia:</strong> Aposta múltipla nos 3 grandes até haver top 2 claro, depois top 2</p>
+            <p><strong>Sistema TARGET-MARTINGALE:</strong> Cálculo dinâmico baseado em lucro alvo</p>
+            <p><strong>Lucro alvo base:</strong> EUR5 por aposta bem-sucedida</p>
+            <p><strong>Limites:</strong> Mín EUR1 | Máx EUR200</p>
+            <p><strong>Odds combinadas mínimas:</strong> 1.25</p>
+            <p><strong>Total de jornadas:</strong> 34</p>
+        </div>
+        <div class="target-info">
+            <strong>💡 Sistema Target-Based:</strong> Cada aposta é calculada para atingir um lucro específico, ajustando automaticamente o valor investido com base nas odds disponíveis.
+        </div>
+        <div class="formula-display">
+            <strong>Fórmula:</strong> Valor da Aposta = Lucro Alvo ÷ (Odds Combinadas - 1)
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 1 - 12/08/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 2.54 - 1) = EUR3.25
+  [APOSTA FEITA] <br>Tondela@10 vs@5 Benfica@1.3 | Sp Lisbon@1.22 vs@5.75 Maritimo@13 | Rio Ave@5.75 vs@3.75 Porto@1.6 = Odd combinada: 2.54 - Valor: EUR3.25 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Tondela <strong>0</strong> x <strong>2</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Sp Lisbon <strong>2</strong> x <strong>0</strong> Maritimo</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Sp Lisbon)</span>
+    <span class='match-result'>Rio Ave <strong>1</strong> x <strong>3</strong> Porto</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR3.25</strong> - Retorno: <strong>EUR8.25</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR5 - Mantendo target base: EUR5</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao Atualizada - Apos Jornada 1</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Chaves</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Benfica</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Setubal</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 2 - 19/08/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 2.11 - 1) = EUR4.49
+  [APOSTA FEITA] <br>Benfica@1.17 vs@7 Setubal@15 | Pacos Ferreira@9 vs@4.2 Sp Lisbon@1.4 | Porto@1.29 vs@5.5 Estoril@9.5 = Odd combinada: 2.11 - Valor: EUR4.49 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>1</strong> x <strong>1</strong> Setubal</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Benfica)</span>
+    <span class='match-result'>Pacos Ferreira <strong>0</strong> x <strong>1</strong> Sp Lisbon</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Sp Lisbon)</span>
+    <span class='match-result'>Porto <strong>1</strong> x <strong>0</strong> Estoril</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR4.49</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR9.49 (perdas: EUR4.49)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 1</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Chaves</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Benfica</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Setubal</td><td class='points'>3</td><td class='games'>1J 1V-0E-0D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 2</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Porto</td><td class='points'>6</td><td class='games'>2J 2V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>6</td><td class='games'>2J 2V-0E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Chaves</td><td class='points'>4</td><td class='games'>2J 1V-1E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Benfica</td><td class='points'>4</td><td class='games'>2J 1V-1E-0D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 3 - 26/08/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR9.49 (perdas acumuladas: EUR4.49)
+  [CONFLITOS] Sp Lisbon vs Porto (confronto direto)
+  [NAO APOSTA] Equipas disponiveis insuficientes (1)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 2</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Porto</td><td class='points'>6</td><td class='games'>2J 2V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>6</td><td class='games'>2J 2V-0E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Chaves</td><td class='points'>4</td><td class='games'>2J 1V-1E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Benfica</td><td class='points'>4</td><td class='games'>2J 1V-1E-0D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 3</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Sp Lisbon</td><td class='points'>9</td><td class='games'>3J 3V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Braga</td><td class='points'>7</td><td class='games'>3J 2V-1E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Benfica</td><td class='points'>7</td><td class='games'>3J 2V-1E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Setubal</td><td class='points'>7</td><td class='games'>3J 2V-1E-0D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 4 - 09/09/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR9.49 (perdas acumuladas: EUR4.49)
+  [CALCULO] Target: EUR9.49 ÷ (Odd 2.54 - 1) = EUR6.15
+  [APOSTA FEITA] <br>Arouca@7.5 vs@4.2 Benfica@1.45 | Sp Lisbon@1.29 vs@5 Moreirense@12 | Porto@1.36 vs@5 Guimaraes@7.5 = Odd combinada: 2.54 - Valor: EUR6.15 (Lucro esperado: EUR9.49)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Arouca <strong>1</strong> x <strong>2</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Sp Lisbon <strong>3</strong> x <strong>0</strong> Moreirense</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Sp Lisbon)</span>
+    <span class='match-result'>Porto <strong>3</strong> x <strong>0</strong> Guimaraes</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR6.15</strong> - Retorno: <strong>EUR15.64</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR9.49 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 3</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Sp Lisbon</td><td class='points'>9</td><td class='games'>3J 3V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Braga</td><td class='points'>7</td><td class='games'>3J 2V-1E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Benfica</td><td class='points'>7</td><td class='games'>3J 2V-1E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Setubal</td><td class='points'>7</td><td class='games'>3J 2V-1E-0D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 4</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Sp Lisbon</td><td class='points'>12</td><td class='games'>4J 4V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Braga</td><td class='points'>10</td><td class='games'>4J 3V-1E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Benfica</td><td class='points'>10</td><td class='games'>4J 3V-1E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Porto</td><td class='points'>9</td><td class='games'>4J 3V-0E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 5 - 16/09/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 3.31 - 1) = EUR2.16
+  [APOSTA FEITA] <br>Benfica@1.55 vs@4 Sp Braga@6 | Rio Ave@5.5 vs@4 Sp Lisbon@1.57 | Tondela@8.5 vs@4.75 Porto@1.36 = Odd combinada: 3.31 - Valor: EUR2.16 (Lucro esperado: EUR4.99)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>1</strong> Sp Braga</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Rio Ave <strong>3</strong> x <strong>1</strong> Sp Lisbon</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-loss'>(LOSS Sp Lisbon)</span>
+    <span class='match-result'>Tondela <strong>0</strong> x <strong>0</strong> Porto</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR2.16</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR7.16 (perdas: EUR2.16)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 4</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Sp Lisbon</td><td class='points'>12</td><td class='games'>4J 4V-0E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Braga</td><td class='points'>10</td><td class='games'>4J 3V-1E-0D</td></tr><tr><td class='position'>3</td><td class='team-name'>Benfica</td><td class='points'>10</td><td class='games'>4J 3V-1E-0D</td></tr><tr><td class='position'>4</td><td class='team-name'>Porto</td><td class='points'>9</td><td class='games'>4J 3V-0E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 5</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>13</td><td class='games'>5J 4V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>12</td><td class='games'>5J 4V-0E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Porto</td><td class='points'>10</td><td class='games'>5J 3V-1E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>10</td><td class='games'>5J 3V-1E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 6 - 23/09/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR7.16 (perdas acumuladas: EUR2.16)
+  [CALCULO] Target: EUR7.16 ÷ (Odd 1.68 - 1) = EUR10.46
+  [APOSTA FEITA] <br>Chaves@9 vs@4 Benfica@1.44 | Sp Lisbon@1.17 vs@6.5 Estoril@19 = Odd combinada: 1.68 - Valor: EUR10.46 (Lucro esperado: EUR7.16)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Chaves <strong>0</strong> x <strong>2</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Sp Lisbon <strong>4</strong> x <strong>2</strong> Estoril</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Sp Lisbon)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR10.46</strong> - Retorno: <strong>EUR17.62</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR7.16 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 5</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>13</td><td class='games'>5J 4V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>12</td><td class='games'>5J 4V-0E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Porto</td><td class='points'>10</td><td class='games'>5J 3V-1E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>10</td><td class='games'>5J 3V-1E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 6</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>16</td><td class='games'>6J 5V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>15</td><td class='games'>6J 5V-0E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Porto</td><td class='points'>13</td><td class='games'>6J 4V-1E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>13</td><td class='games'>6J 4V-1E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 7 - 30/09/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.9 - 1) = EUR5.53
+  [APOSTA FEITA] <br>Benfica@1.14 vs@7.5 Feirense@19 | Guimaraes@5.25 vs@3.6 Sp Lisbon@1.67 = Odd combinada: 1.9 - Valor: EUR5.53 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>4</strong> x <strong>0</strong> Feirense</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Guimaraes <strong>3</strong> x <strong>3</strong> Sp Lisbon</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Sp Lisbon)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR5.53</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR10.53 (perdas: EUR5.53)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 6</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>16</td><td class='games'>6J 5V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>15</td><td class='games'>6J 5V-0E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Porto</td><td class='points'>13</td><td class='games'>6J 4V-1E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>13</td><td class='games'>6J 4V-1E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 7</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>19</td><td class='games'>7J 6V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>16</td><td class='games'>7J 5V-1E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>16</td><td class='games'>7J 5V-1E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>14</td><td class='games'>7J 4V-2E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 8 - 21/10/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR10.53 (perdas acumuladas: EUR5.53)
+  [CALCULO] Target: EUR10.53 ÷ (Odd 2.01 - 1) = EUR10.48
+  [APOSTA FEITA] <br>Belenenses@7.5 vs@4.2 Benfica@1.44 | Sp Lisbon@1.18 vs@6.5 Tondela@15 | Porto@1.18 vs@6.5 Arouca@15 = Odd combinada: 2.01 - Valor: EUR10.48 (Lucro esperado: EUR10.53)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Belenenses <strong>0</strong> x <strong>2</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Sp Lisbon <strong>1</strong> x <strong>1</strong> Tondela</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Sp Lisbon)</span>
+    <span class='match-result'>Porto <strong>3</strong> x <strong>0</strong> Arouca</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR10.48</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 2/6 - Novo target: EUR21.01 (perdas: EUR16.01)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 7</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>19</td><td class='games'>7J 6V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>16</td><td class='games'>7J 5V-1E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>16</td><td class='games'>7J 5V-1E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>14</td><td class='games'>7J 4V-2E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 8</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>22</td><td class='games'>8J 7V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>19</td><td class='games'>8J 6V-1E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>17</td><td class='games'>8J 5V-2E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>17</td><td class='games'>8J 5V-2E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 9 - 28/10/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 2/6 - Target: EUR21.01 (perdas acumuladas: EUR16.01)
+  [CALCULO] Target: EUR21.01 ÷ (Odd 1.55 - 1) = EUR38.34
+  [APOSTA FEITA] <br>Benfica@1.2 vs@6 Pacos Ferreira@15 | Setubal@9 vs@5.75 Porto@1.29 = Odd combinada: 1.55 - Valor: EUR38.34 (Lucro esperado: EUR21.01)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>0</strong> Pacos Ferreira</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Setubal <strong>0</strong> x <strong>0</strong> Porto</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR38.34</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 3/6 - Novo target: EUR59.35 (perdas: EUR54.35)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 8</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>22</td><td class='games'>8J 7V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>19</td><td class='games'>8J 6V-1E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>17</td><td class='games'>8J 5V-2E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>17</td><td class='games'>8J 5V-2E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 9</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>25</td><td class='games'>9J 8V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>20</td><td class='games'>9J 6V-2E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>20</td><td class='games'>9J 6V-2E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>18</td><td class='games'>9J 5V-3E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 10 - 04/11/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 3/6 - Target: EUR59.35 (perdas acumuladas: EUR54.35)
+  [CONFLITOS] Porto vs Benfica (confronto direto)
+  [NAO APOSTA] Equipas disponiveis insuficientes (1)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 9</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>25</td><td class='games'>9J 8V-1E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>20</td><td class='games'>9J 6V-2E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>20</td><td class='games'>9J 6V-2E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>18</td><td class='games'>9J 5V-3E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 10</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>26</td><td class='games'>10J 8V-2E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>21</td><td class='games'>10J 6V-3E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>21</td><td class='games'>10J 6V-3E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>20</td><td class='games'>10J 6V-2E-2D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 11 - 25/11/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 3/6 - Target: EUR59.35 (perdas acumuladas: EUR54.35)
+  [CALCULO] Target: EUR59.35 ÷ (Odd 2.01 - 1) = EUR58.92
+  [APOSTA FEITA] <br>Benfica@1.17 vs@7 Moreirense@15 | Boavista@9 vs@5 Sp Lisbon@1.33 | Belenenses@10 vs@5.25 Porto@1.29 = Odd combinada: 2.01 - Valor: EUR58.92 (Lucro esperado: EUR59.35)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>0</strong> Moreirense</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Boavista <strong>0</strong> x <strong>1</strong> Sp Lisbon</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Sp Lisbon)</span>
+    <span class='match-result'>Belenenses <strong>0</strong> x <strong>0</strong> Porto</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR58.92</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 4/6 - Novo target: EUR118.27 (perdas: EUR113.27)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 10</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>26</td><td class='games'>10J 8V-2E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>21</td><td class='games'>10J 6V-3E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>21</td><td class='games'>10J 6V-3E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>20</td><td class='games'>10J 6V-2E-2D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 11</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>29</td><td class='games'>11J 9V-2E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>24</td><td class='games'>11J 7V-3E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>23</td><td class='games'>11J 7V-2E-2D</td></tr><tr><td class='position'>4</td><td class='team-name'>Porto</td><td class='points'>22</td><td class='games'>11J 6V-4E-1D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 12 - 02/12/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 4/6 - Target: EUR118.27 (perdas acumuladas: EUR113.27)
+  [CALCULO] Target: EUR118.27 ÷ (Odd 1.63 - 1) = EUR187.14
+  [APOSTA FEITA] <br>Maritimo@9.5 vs@4.5 Benfica@1.36 | Sp Lisbon@1.2 vs@6 Setubal@15 = Odd combinada: 1.63 - Valor: EUR187.14 (Lucro esperado: EUR118.27)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Maritimo <strong>2</strong> x <strong>1</strong> Benfica</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-loss'>(LOSS Benfica)</span>
+    <span class='match-result'>Sp Lisbon <strong>2</strong> x <strong>0</strong> Setubal</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Sp Lisbon)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR187.14</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 5/6 - Novo target: EUR305.41 (perdas: EUR300.41)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 11</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>29</td><td class='games'>11J 9V-2E-0D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>24</td><td class='games'>11J 7V-3E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>23</td><td class='games'>11J 7V-2E-2D</td></tr><tr><td class='position'>4</td><td class='team-name'>Porto</td><td class='points'>22</td><td class='games'>11J 6V-4E-1D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 12</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>29</td><td class='games'>12J 9V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>27</td><td class='games'>12J 8V-3E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Porto</td><td class='points'>25</td><td class='games'>12J 7V-4E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>23</td><td class='games'>12J 7V-2E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 13 - 09/12/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 5/6 - Target: EUR305.41 (perdas acumuladas: EUR300.41)
+  [CONFLITOS] Benfica vs Sp Lisbon (confronto direto)
+  [NAO APOSTA] Equipas disponiveis insuficientes (0)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 12</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>29</td><td class='games'>12J 9V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Sp Lisbon</td><td class='points'>27</td><td class='games'>12J 8V-3E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Porto</td><td class='points'>25</td><td class='games'>12J 7V-4E-1D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>23</td><td class='games'>12J 7V-2E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 13</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>32</td><td class='games'>13J 10V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>28</td><td class='games'>13J 8V-4E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>27</td><td class='games'>13J 8V-3E-2D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>26</td><td class='games'>13J 8V-2E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 14 - 16/12/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 5/6 - Target: EUR305.41 (perdas acumuladas: EUR300.41)
+  [CALCULO] Target: EUR305.41 ÷ (Odd 1.43 - 1) = EUR200
+  [APOSTA FEITA] <br>Estoril@13 vs@5.75 Benfica@1.22 | Porto@1.17 vs@7.5 Chaves@14 = Odd combinada: 1.43 - Valor: EUR200 (Lucro esperado: EUR85.48)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Estoril <strong>0</strong> x <strong>1</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>2</strong> x <strong>1</strong> Chaves</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR200</strong> - Retorno: <strong>EUR285.48</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR85.48 - Sequencia recuperada: EUR-214.93 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 13</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>32</td><td class='games'>13J 10V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>28</td><td class='games'>13J 8V-4E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>27</td><td class='games'>13J 8V-3E-2D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>26</td><td class='games'>13J 8V-2E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 14</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>35</td><td class='games'>14J 11V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>31</td><td class='games'>14J 9V-4E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>29</td><td class='games'>14J 9V-2E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>27</td><td class='games'>14J 8V-3E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 15 - 15/12/2016</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.44 - 1) = EUR11.36
+  [APOSTA FEITA] <br>Benfica@1.2 vs@6 Rio Ave@15 | Porto@1.2 vs@6 Maritimo@15 = Odd combinada: 1.44 - Valor: EUR11.36 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>2</strong> x <strong>0</strong> Rio Ave</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>2</strong> x <strong>1</strong> Maritimo</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR11.36</strong> - Retorno: <strong>EUR16.36</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR5 - Mantendo target base: EUR5</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 14</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>35</td><td class='games'>14J 11V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>31</td><td class='games'>14J 9V-4E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>29</td><td class='games'>14J 9V-2E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>27</td><td class='games'>14J 8V-3E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 15</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>38</td><td class='games'>15J 12V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>34</td><td class='games'>15J 10V-4E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>32</td><td class='games'>15J 10V-2E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>30</td><td class='games'>15J 9V-3E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 16 - 07/01/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 2.2 - 1) = EUR4.16
+  [APOSTA FEITA] <br>Guimaraes@5.5 vs@3.75 Benfica@1.62 | Pacos Ferreira@8 vs@4.75 Porto@1.36 = Odd combinada: 2.2 - Valor: EUR4.16 (Lucro esperado: EUR5.01)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Guimaraes <strong>0</strong> x <strong>2</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Pacos Ferreira <strong>0</strong> x <strong>0</strong> Porto</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR4.16</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR9.16 (perdas: EUR4.16)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 15</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>38</td><td class='games'>15J 12V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>34</td><td class='games'>15J 10V-4E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>32</td><td class='games'>15J 10V-2E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>30</td><td class='games'>15J 9V-3E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 16</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>41</td><td class='games'>16J 13V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>35</td><td class='games'>16J 10V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>33</td><td class='games'>16J 10V-3E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>33</td><td class='games'>16J 10V-3E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 17 - 13/01/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR9.16 (perdas acumuladas: EUR4.16)
+  [CALCULO] Target: EUR9.16 ÷ (Odd 1.37 - 1) = EUR24.89
+  [APOSTA FEITA] <br>Benfica@1.14 vs@7.5 Boavista@17 | Porto@1.2 vs@6.5 Moreirense@13 = Odd combinada: 1.37 - Valor: EUR24.89 (Lucro esperado: EUR9.16)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>3</strong> Boavista</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Benfica)</span>
+    <span class='match-result'>Porto <strong>3</strong> x <strong>0</strong> Moreirense</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR24.89</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 2/6 - Novo target: EUR34.05 (perdas: EUR29.05)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 16</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>41</td><td class='games'>16J 13V-2E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>35</td><td class='games'>16J 10V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>33</td><td class='games'>16J 10V-3E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>33</td><td class='games'>16J 10V-3E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 17</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>42</td><td class='games'>17J 13V-3E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>38</td><td class='games'>17J 11V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>36</td><td class='games'>17J 11V-3E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>34</td><td class='games'>17J 10V-4E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 18 - 20/01/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 2/6 - Target: EUR34.05 (perdas acumuladas: EUR29.05)
+  [CALCULO] Target: EUR34.05 ÷ (Odd 1.39 - 1) = EUR87.87
+  [APOSTA FEITA] <br>Benfica@1.11 vs@9 Tondela@19 | Porto@1.25 vs@5.5 Rio Ave@12 = Odd combinada: 1.39 - Valor: EUR87.87 (Lucro esperado: EUR34.05)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>4</strong> x <strong>0</strong> Tondela</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>4</strong> x <strong>2</strong> Rio Ave</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR87.87</strong> - Retorno: <strong>EUR121.92</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR34.05 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 17</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>42</td><td class='games'>17J 13V-3E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>38</td><td class='games'>17J 11V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>36</td><td class='games'>17J 11V-3E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>34</td><td class='games'>17J 10V-4E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 18</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>45</td><td class='games'>18J 14V-3E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>41</td><td class='games'>18J 12V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>36</td><td class='games'>18J 11V-3E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>35</td><td class='games'>18J 10V-5E-3D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 19 - 27/01/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.66 - 1) = EUR7.55
+  [APOSTA FEITA] <br>Setubal@8.5 vs@5 Benfica@1.33 | Estoril@11 vs@5.75 Porto@1.25 = Odd combinada: 1.66 - Valor: EUR7.55 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Setubal <strong>1</strong> x <strong>0</strong> Benfica</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-loss'>(LOSS Benfica)</span>
+    <span class='match-result'>Estoril <strong>1</strong> x <strong>2</strong> Porto</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR7.55</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR12.55 (perdas: EUR7.55)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 18</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>45</td><td class='games'>18J 14V-3E-1D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>41</td><td class='games'>18J 12V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Braga</td><td class='points'>36</td><td class='games'>18J 11V-3E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Lisbon</td><td class='points'>35</td><td class='games'>18J 10V-5E-3D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 19</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>45</td><td class='games'>19J 14V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>44</td><td class='games'>19J 13V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>38</td><td class='games'>19J 11V-5E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>36</td><td class='games'>19J 11V-3E-5D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 20 - 03/02/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR12.55 (perdas acumuladas: EUR7.55)
+  [CONFLITOS] Porto vs Sp Lisbon (vs Big3)
+  [NAO APOSTA] Equipas disponiveis insuficientes (1)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 19</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>45</td><td class='games'>19J 14V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>44</td><td class='games'>19J 13V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>38</td><td class='games'>19J 11V-5E-3D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>36</td><td class='games'>19J 11V-3E-5D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 20</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>48</td><td class='games'>20J 15V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>47</td><td class='games'>20J 14V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>38</td><td class='games'>20J 11V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>37</td><td class='games'>20J 11V-4E-5D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 21 - 10/02/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR12.55 (perdas acumuladas: EUR7.55)
+  [CALCULO] Target: EUR12.55 ÷ (Odd 1.81 - 1) = EUR15.58
+  [APOSTA FEITA] <br>Benfica@1.18 vs@6.5 Arouca@15 | Guimaraes@6.5 vs@3.8 Porto@1.53 = Odd combinada: 1.81 - Valor: EUR15.58 (Lucro esperado: EUR12.55)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>0</strong> Arouca</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Guimaraes <strong>0</strong> x <strong>2</strong> Porto</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR15.58</strong> - Retorno: <strong>EUR28.13</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR12.55 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 20</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>48</td><td class='games'>20J 15V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>47</td><td class='games'>20J 14V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>38</td><td class='games'>20J 11V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>37</td><td class='games'>20J 11V-4E-5D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 21</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>51</td><td class='games'>21J 16V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>50</td><td class='games'>21J 15V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>41</td><td class='games'>21J 12V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>38</td><td class='games'>21J 11V-5E-5D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 22 - 17/02/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.95 - 1) = EUR5.24
+  [APOSTA FEITA] <br>Sp Braga@5 vs@3.5 Benfica@1.73 | Porto@1.13 vs@7.5 Tondela@23 = Odd combinada: 1.95 - Valor: EUR5.24 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Sp Braga <strong>0</strong> x <strong>1</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>4</strong> x <strong>0</strong> Tondela</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR5.24</strong> - Retorno: <strong>EUR10.24</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR5 - Mantendo target base: EUR5</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 21</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>51</td><td class='games'>21J 16V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>50</td><td class='games'>21J 15V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>41</td><td class='games'>21J 12V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>38</td><td class='games'>21J 11V-5E-5D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 22</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>54</td><td class='games'>22J 17V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>53</td><td class='games'>22J 16V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>44</td><td class='games'>22J 13V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>38</td><td class='games'>22J 11V-5E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 23 - 24/02/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.6 - 1) = EUR8.27
+  [APOSTA FEITA] <br>Benfica@1.18 vs@6.5 Chaves@15 | Boavista@9.5 vs@4.5 Porto@1.36 = Odd combinada: 1.6 - Valor: EUR8.27 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>1</strong> Chaves</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Boavista <strong>0</strong> x <strong>1</strong> Porto</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR8.27</strong> - Retorno: <strong>EUR13.27</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR5 - Mantendo target base: EUR5</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 22</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>54</td><td class='games'>22J 17V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>53</td><td class='games'>22J 16V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>44</td><td class='games'>22J 13V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>38</td><td class='games'>22J 11V-5E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 23</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>57</td><td class='games'>23J 18V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>56</td><td class='games'>23J 17V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>47</td><td class='games'>23J 14V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>39</td><td class='games'>23J 11V-6E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 24 - 03/03/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.54 - 1) = EUR9.31
+  [APOSTA FEITA] <br>Feirense@8 vs@4.75 Benfica@1.36 | Porto@1.13 vs@8 Nacional@19 = Odd combinada: 1.54 - Valor: EUR9.31 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Feirense <strong>0</strong> x <strong>1</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>7</strong> x <strong>0</strong> Nacional</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR9.31</strong> - Retorno: <strong>EUR14.31</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR5 - Mantendo target base: EUR5</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 23</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>57</td><td class='games'>23J 18V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>56</td><td class='games'>23J 17V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>47</td><td class='games'>23J 14V-5E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>39</td><td class='games'>23J 11V-6E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 24</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>60</td><td class='games'>24J 19V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>59</td><td class='games'>24J 18V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>48</td><td class='games'>24J 14V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>42</td><td class='games'>24J 12V-6E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 25 - 10/03/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.48 - 1) = EUR10.53
+  [APOSTA FEITA] <br>Benfica@1.18 vs@6.5 Belenenses@15 | Arouca@13 vs@5.25 Porto@1.25 = Odd combinada: 1.48 - Valor: EUR10.53 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>4</strong> x <strong>0</strong> Belenenses</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Arouca <strong>0</strong> x <strong>4</strong> Porto</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR10.53</strong> - Retorno: <strong>EUR15.53</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR5 - Mantendo target base: EUR5</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 24</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>60</td><td class='games'>24J 19V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>59</td><td class='games'>24J 18V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>48</td><td class='games'>24J 14V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>42</td><td class='games'>24J 12V-6E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 25</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>63</td><td class='games'>25J 20V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>62</td><td class='games'>25J 19V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>51</td><td class='games'>25J 15V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>43</td><td class='games'>25J 12V-7E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 26 - 17/03/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.52 - 1) = EUR9.6
+  [APOSTA FEITA] <br>Pacos Ferreira@11 vs@5 Benfica@1.3 | Porto@1.17 vs@7 Setubal@15 = Odd combinada: 1.52 - Valor: EUR9.6 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Pacos Ferreira <strong>0</strong> x <strong>0</strong> Benfica</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Benfica)</span>
+    <span class='match-result'>Porto <strong>1</strong> x <strong>1</strong> Setubal</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR9.6</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR14.6 (perdas: EUR9.6)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 25</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>63</td><td class='games'>25J 20V-3E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>62</td><td class='games'>25J 19V-5E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>51</td><td class='games'>25J 15V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>43</td><td class='games'>25J 12V-7E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 26</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>64</td><td class='games'>26J 20V-4E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>63</td><td class='games'>26J 19V-6E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>54</td><td class='games'>26J 16V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>46</td><td class='games'>26J 13V-7E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 27 - 31/03/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR14.6 (perdas acumuladas: EUR9.6)
+  [CONFLITOS] Benfica vs Porto (confronto direto)
+  [NAO APOSTA] Equipas disponiveis insuficientes (0)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 26</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>64</td><td class='games'>26J 20V-4E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>63</td><td class='games'>26J 19V-6E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>54</td><td class='games'>26J 16V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>46</td><td class='games'>26J 13V-7E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 27</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>65</td><td class='games'>27J 20V-5E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>64</td><td class='games'>27J 19V-7E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>57</td><td class='games'>27J 17V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>47</td><td class='games'>27J 13V-8E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 28 - 07/04/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR14.6 (perdas acumuladas: EUR9.6)
+  [CALCULO] Target: EUR14.6 ÷ (Odd 1.54 - 1) = EUR27.2
+  [APOSTA FEITA] <br>Moreirense@8.5 vs@4.75 Benfica@1.36 | Porto@1.13 vs@8 Belenenses@19 = Odd combinada: 1.54 - Valor: EUR27.2 (Lucro esperado: EUR14.6)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Moreirense <strong>0</strong> x <strong>1</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>3</strong> x <strong>0</strong> Belenenses</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR27.2</strong> - Retorno: <strong>EUR41.8</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR14.6 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 27</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>65</td><td class='games'>27J 20V-5E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>64</td><td class='games'>27J 19V-7E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>57</td><td class='games'>27J 17V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>47</td><td class='games'>27J 13V-8E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 28</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>68</td><td class='games'>28J 21V-5E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>67</td><td class='games'>28J 20V-7E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>60</td><td class='games'>28J 18V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>50</td><td class='games'>28J 14V-8E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 29 - 14/04/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 1.8 - 1) = EUR6.25
+  [APOSTA FEITA] <br>Benfica@1.2 vs@6.5 Maritimo@13 | Sp Braga@7 vs@4 Porto@1.5 = Odd combinada: 1.8 - Valor: EUR6.25 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>3</strong> x <strong>0</strong> Maritimo</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Sp Braga <strong>1</strong> x <strong>1</strong> Porto</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR6.25</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR11.25 (perdas: EUR6.25)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 28</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>68</td><td class='games'>28J 21V-5E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>67</td><td class='games'>28J 20V-7E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>60</td><td class='games'>28J 18V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Sp Braga</td><td class='points'>50</td><td class='games'>28J 14V-8E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 29</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>71</td><td class='games'>29J 22V-5E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>68</td><td class='games'>29J 20V-8E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>63</td><td class='games'>29J 19V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>53</td><td class='games'>29J 15V-8E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 30 - 21/04/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR11.25 (perdas acumuladas: EUR6.25)
+  [CONFLITOS] Benfica vs Sp Lisbon (vs Big3)
+  [NAO APOSTA] Equipas disponiveis insuficientes (1)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 29</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>71</td><td class='games'>29J 22V-5E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>68</td><td class='games'>29J 20V-8E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>63</td><td class='games'>29J 19V-6E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>53</td><td class='games'>29J 15V-8E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 30</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>72</td><td class='games'>30J 22V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>69</td><td class='games'>30J 20V-9E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>64</td><td class='games'>30J 19V-7E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>56</td><td class='games'>30J 16V-8E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 31 - 28/04/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR11.25 (perdas acumuladas: EUR6.25)
+  [CALCULO] Target: EUR11.25 ÷ (Odd 1.55 - 1) = EUR20.44
+  [APOSTA FEITA] <br>Benfica@1.14 vs@7.5 Estoril@19 | Chaves@9 vs@4.5 Porto@1.36 = Odd combinada: 1.55 - Valor: EUR20.44 (Lucro esperado: EUR11.25)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>2</strong> x <strong>1</strong> Estoril</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Chaves <strong>0</strong> x <strong>2</strong> Porto</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR20.44</strong> - Retorno: <strong>EUR31.69</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR11.25 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 30</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>72</td><td class='games'>30J 22V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>69</td><td class='games'>30J 20V-9E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>64</td><td class='games'>30J 19V-7E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>56</td><td class='games'>30J 16V-8E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 31</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>75</td><td class='games'>31J 23V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>72</td><td class='games'>31J 21V-9E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>67</td><td class='games'>31J 20V-7E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>59</td><td class='games'>31J 17V-8E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 32 - 05/05/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Base target: EUR5
+  [CALCULO] Target: EUR5 ÷ (Odd 2.16 - 1) = EUR4.31
+  [APOSTA FEITA] <br>Rio Ave@7 vs@4 Benfica@1.5 | Maritimo@7.5 vs@4.2 Porto@1.44 = Odd combinada: 2.16 - Valor: EUR4.31 (Lucro esperado: EUR5)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Rio Ave <strong>0</strong> x <strong>1</strong> Benfica</span> → <span class='game-result'>Vitoria fora</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Maritimo <strong>1</strong> x <strong>1</strong> Porto</span> → <span class='game-result'>Empate</span> <span class='bet-outcome-loss'>(LOSS Porto)</span>
+  <div class='bet-result-loss'>[RESULTADO] <strong>PERDEU</strong> - Investido: <strong>EUR4.31</strong> - Retorno: <strong>EUR0</strong></div>
+  [TARGET-MARTINGALE] LOSS! Nivel 1/6 - Novo target: EUR9.31 (perdas: EUR4.31)</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 31</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>75</td><td class='games'>31J 23V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>72</td><td class='games'>31J 21V-9E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>67</td><td class='games'>31J 20V-7E-4D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>59</td><td class='games'>31J 17V-8E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 32</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>78</td><td class='games'>32J 24V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>73</td><td class='games'>32J 21V-10E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>67</td><td class='games'>32J 20V-7E-5D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>62</td><td class='games'>32J 18V-8E-6D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 33 - 12/05/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre>[TARGET-MARTINGALE] Nivel 1/6 - Target: EUR9.31 (perdas acumuladas: EUR4.31)
+  [CALCULO] Target: EUR9.31 ÷ (Odd 1.42 - 1) = EUR21.91
+  [APOSTA FEITA] <br>Benfica@1.25 vs@5.25 Guimaraes@13 | Porto@1.14 vs@8 Pacos Ferreira@15 = Odd combinada: 1.42 - Valor: EUR21.91 (Lucro esperado: EUR9.31)
+[JOGOS APOSTADOS]
+    <span class='match-result'>Benfica <strong>5</strong> x <strong>0</strong> Guimaraes</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Benfica)</span>
+    <span class='match-result'>Porto <strong>4</strong> x <strong>1</strong> Pacos Ferreira</span> → <span class='game-result'>Vitoria casa</span> <span class='bet-outcome-win'>(WIN Porto)</span>
+  <div class='bet-result-win'>[RESULTADO] <strong>GANHOU</strong> - Investido: <strong>EUR21.91</strong> - Retorno: <strong>EUR31.22</strong></div>
+  [TARGET-MARTINGALE] WIN! Lucro: EUR9.31 - Sequencia recuperada: EUR5 - RESET</pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao para Apostas - Apos Jornada 32</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>78</td><td class='games'>32J 24V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>73</td><td class='games'>32J 21V-10E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>67</td><td class='games'>32J 20V-7E-5D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>62</td><td class='games'>32J 18V-8E-6D</td></tr></tbody></table><h4>Classificacao Atualizada - Apos Jornada 33</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>81</td><td class='games'>33J 25V-6E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>76</td><td class='games'>33J 22V-10E-1D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>67</td><td class='games'>33J 20V-7E-6D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>62</td><td class='games'>33J 18V-8E-7D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='jornada-container'>
+            <div class='jornada-header'>JORNADA 34 - 20/05/2017</div>
+            <div class='bets-section'>
+                <h3>🎲 Informações de Apostas</h3>
+                <pre></pre>
+            </div>
+            <div class='standings-section'>
+                <h3>📊 Classificações da Jornada</h3>
+                <div><h4>Classificacao Atualizada - Apos Jornada 34</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>82</td><td class='games'>34J 25V-7E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>76</td><td class='games'>34J 22V-10E-2D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>70</td><td class='games'>34J 21V-7E-6D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>62</td><td class='games'>34J 18V-8E-8D</td></tr></tbody></table></div>
+            </div>
+        </div>        <div class='final-summary'>
+            <h2>🏁 RESULTADOS FINAIS</h2>
+            <div class='summary-block'>
+                <h4>🏆 Classificação Final da Liga</h4><table class='standings-table'><thead><tr><th class='position'>#</th><th class='team-name'>Equipa</th><th class='points'>Pts</th><th class='games'>Jogos</th></tr></thead><tbody><tr><td class='position'>1</td><td class='team-name'>Benfica</td><td class='points'>82</td><td class='games'>34J 25V-7E-2D</td></tr><tr><td class='position'>2</td><td class='team-name'>Porto</td><td class='points'>76</td><td class='games'>34J 22V-10E-2D</td></tr><tr><td class='position'>3</td><td class='team-name'>Sp Lisbon</td><td class='points'>70</td><td class='games'>34J 21V-7E-6D</td></tr><tr><td class='position'>4</td><td class='team-name'>Guimaraes</td><td class='points'>62</td><td class='games'>34J 18V-8E-8D</td></tr><tr><td class='position'>5</td><td class='team-name'>Sp Braga</td><td class='points'>54</td><td class='games'>34J 15V-9E-10D</td></tr><tr><td class='position'>6</td><td class='team-name'>Maritimo</td><td class='points'>50</td><td class='games'>34J 13V-11E-10D</td></tr><tr><td class='position'>7</td><td class='team-name'>Rio Ave</td><td class='points'>49</td><td class='games'>34J 14V-7E-13D</td></tr><tr><td class='position'>8</td><td class='team-name'>Feirense</td><td class='points'>48</td><td class='games'>34J 14V-6E-14D</td></tr><tr><td class='position'>9</td><td class='team-name'>Boavista</td><td class='points'>43</td><td class='games'>34J 10V-13E-11D</td></tr><tr><td class='position'>10</td><td class='team-name'>Setubal</td><td class='points'>38</td><td class='games'>34J 10V-8E-16D</td></tr><tr><td class='position'>11</td><td class='team-name'>Estoril</td><td class='points'>38</td><td class='games'>34J 10V-8E-16D</td></tr><tr><td class='position'>12</td><td class='team-name'>Chaves</td><td class='points'>38</td><td class='games'>34J 8V-14E-12D</td></tr><tr><td class='position'>13</td><td class='team-name'>Belenenses</td><td class='points'>36</td><td class='games'>34J 9V-9E-16D</td></tr><tr><td class='position'>14</td><td class='team-name'>Pacos Ferreira</td><td class='points'>36</td><td class='games'>34J 8V-12E-14D</td></tr><tr><td class='position'>15</td><td class='team-name'>Moreirense</td><td class='points'>33</td><td class='games'>34J 8V-9E-17D</td></tr><tr><td class='position'>16</td><td class='team-name'>Arouca</td><td class='points'>32</td><td class='games'>34J 9V-5E-20D</td></tr><tr><td class='position'>17</td><td class='team-name'>Tondela</td><td class='points'>32</td><td class='games'>34J 8V-8E-18D</td></tr><tr><td class='position'>18</td><td class='team-name'>Nacional</td><td class='points'>21</td><td class='games'>34J 4V-9E-21D</td></tr></tbody></table>
+            </div>
+            <div class='summary-block'>
+                <h3>💰 Resumo Financeiro</h3>
+                <p><strong>Total apostas:</strong> 27</p>
+<p><strong>Vitórias:</strong> 14 | <strong>Derrotas:</strong> 13</p>
+<p><strong>Taxa de vitória:</strong> 51.85%</p>
+<p><strong>Total investido:</strong> EUR801.39</p>
+<p><strong>Total retornos:</strong> EUR651.47</p>
+<p><strong>Resultado:</strong> <span class="financial-loss">EUR-149.92 PREJUÍZO</span></p>
+
+<div class="target-highlight">
+    <h4>🎯 Estatísticas Target-Based</h4>
+    <p><strong>Lucro alvo base:</strong> EUR5</p>
+    <p><strong>Lucro alvo médio:</strong> EUR25.63</p>
+    <p><strong>Aposta mínima:</strong> EUR2.16</p>
+    <p><strong>Aposta média:</strong> EUR29.68</p>
+    <p><strong>Aposta máxima:</strong> <span style="color: #2196f3; font-weight: bold;">EUR200</span></p>
+</div>
+
+<hr>
+<h4>📈 Estatísticas Martingale</h4>
+<p><strong>Nível 0 (Base):</strong> 14 apostas</p>
+<p><strong>Nível 1:</strong> 8 | <strong>Nível 2:</strong> 2 | <strong>Nível 3:</strong> 1</p>
+<p><strong>Nível 4:</strong> 1 | <strong>Nível 5:</strong> 1 | <strong>Nível 6:</strong> 0</p>
+<p><strong>Máxima sequência de derrotas:</strong> <span style="color: #f44336; font-weight: bold;">5</span></p>
+<p><strong>Maior investimento acumulado:</strong> <span style="color: #f44336; font-weight: bold;">EUR500.41</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
