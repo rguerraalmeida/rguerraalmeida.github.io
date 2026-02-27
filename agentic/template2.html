@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template 2 - Liquid Gradient | A Empresa</title>
+    <link rel="stylesheet" href="shared/ai-pipeline.css">
+    <style>
+        body { color: #fff; }
+        .gradient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: linear-gradient(135deg,#667eea 0%,#764ba2 25%,#f093fb 50%,#f5576c 75%,#ffd700 100%); background-size: 400% 400%; animation: gradientShift 15s ease infinite; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .step1-bg { background: linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); }
+        .step2-bg { background: linear-gradient(135deg,#16213e 0%,#0f3460 50%,#e94560 100%); }
+        .step3-bg { background: linear-gradient(135deg,#0f3460 0%,#e94560 50%,#ffd700 100%); }
+        .step4-bg { background: linear-gradient(135deg,#e94560 0%,#ffd700 50%,#ff6b6b 100%); }
+        .pipeline-step { position: relative; }
+        .pipeline-step::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; opacity: 0.3; }
+        .step-content { z-index: 10; }
+        .step-number { color: #fff; -webkit-text-stroke: 3px #fff; }
+        .cta-button { border-color: #fff; color: #fff; }
+        .cta-button:hover { background: #fff; color: #000; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Templates</a>
+    <section class="pipeline-step step1-bg">
+        <div class="top-indicator">01 / 04</div>
+        <div class="step-content">
+            <div class="step-number outlined">01</div>
+            <h2 class="step-title">AI ONBOARDING</h2>
+            <p class="step-body">We audit your chaos.</p>
+            <p class="step-body">Map the waste. Find the wins.</p>
+            <p class="step-body">No "AI strategy decks."</p>
+            <p class="step-body">Just a clear battle plan.</p>
+            <a href="mailto:contact@aempresa.com" class="cta-button">CONTACT US</a>
+        </div>
+    </section>
+    <section class="pipeline-step step2-bg">
+        <div class="top-indicator">02 / 04</div>
+        <div class="step-content">
+            <div class="step-number outlined">02</div>
+            <h2 class="step-title">AI TO BUSINESS</h2>
+            <p class="step-body">Embed AI where it hurts.</p>
+            <p class="step-body">Sales. Ops. Support.</p>
+            <p class="step-body">Not experiments.</p>
+            <p class="step-body">Integration that moves needles.</p>
+            <a href="mailto:contact@aempresa.com" class="cta-button">CONTACT US</a>
+        </div>
+    </section>
+    <section class="pipeline-step step3-bg">
+        <div class="top-indicator">03 / 04</div>
+        <div class="step-content">
+            <div class="step-number outlined">03</div>
+            <h2 class="step-title">AI TO WORKFLOW</h2>
+            <p class="step-body">Automate the robot work.</p>
+            <p class="step-body">Free your humans for human stuff.</p>
+            <p class="step-body">Agents that never sleep.</p>
+            <p class="step-body">Workflows that scale.</p>
+            <a href="mailto:contact@aempresa.com" class="cta-button">CONTACT US</a>
+        </div>
+    </section>
+    <section class="pipeline-step step4-bg">
+        <div class="top-indicator">04 / 04</div>
+        <div class="step-content">
+            <div class="step-number outlined">04</div>
+            <h2 class="step-title">AI TO RESULT</h2>
+            <p class="step-body">The only metric that matters:</p>
+            <p class="step-body">Did it make you money?</p>
+            <p class="step-body">Hours saved. Revenue up.</p>
+            <p class="step-body">Proof, not promises.</p>
+            <a href="mailto:contact@aempresa.com" class="cta-button">CONTACT US</a>
+        </div>
+    </section>
+</body>
+</html>

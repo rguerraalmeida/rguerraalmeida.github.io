@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template 10 - Workflow Flow | A Empresa</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: #0a0e17; 
+            color: #e8eaed; 
+            overflow-x: hidden;
+        }
+        
+        /* Workflow Canvas - Fixed Background on Left */
+        .workflow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.35;
+        }
+        
+        #workflowCanvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Contact Button */
+        .contact-btn-top { 
+            position: fixed; 
+            top: 2rem; 
+            right: 2rem; 
+            z-index: 1000; 
+            padding: 0.875rem 2rem; 
+            background: rgba(10, 14, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid #4a9eff; 
+            color: #4a9eff; 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 700; 
+            font-size: 0.875rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+        }
+        .contact-btn-top:hover { 
+            background: #4a9eff; 
+            color: #0a0e17; 
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.4); 
+        }
+        @media (max-width: 768px) { 
+            .contact-btn-top { 
+                top: 1rem; 
+                right: 1rem; 
+                padding: 0.625rem 1.25rem; 
+                font-size: 0.75rem; 
+            } 
+        }
+        
+        /* Pipeline Sections - Full Screen */
+        .pipeline-step {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 6rem 4rem;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .workflow-bg {
+                width: 100%;
+                opacity: 0.12;
+            }
+            .pipeline-step {
+                padding: 4rem 1.5rem;
+            }
+        }
+        
+        /* Step Content - Centered Layout */
+        .step-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 4rem;
+        }
+        
+        @media (max-width: 768px) { 
+            .step-content { 
+                flex-direction: column; 
+                gap: 2rem;
+            } 
+        }
+        
+        .number-container { 
+            flex: 0 0 35%; 
+            display: flex; 
+            justify-content: flex-start; 
+            align-items: flex-start; 
+        }
+        @media (max-width: 768px) { .number-container { flex: 0 0 auto; } }
+        
+        .number-frame { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: clamp(120px, 15vw, 200px); 
+            height: clamp(120px, 15vw, 200px); 
+            border: 4px solid #4a9eff; 
+            background: rgba(74, 158, 255, 0.1); 
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: clamp(3rem, 5vw, 6rem); 
+            font-weight: 800; 
+            color: #4a9eff; 
+        }
+        @media (max-width: 768px) { 
+            .number-frame { 
+                width: 80px; 
+                height: 80px; 
+                font-size: 2rem; 
+                border-width: 3px; 
+            } 
+        }
+        
+        .text-container { 
+            flex: 0 0 65%; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1.5rem; 
+        }
+        @media (max-width: 768px) { 
+            .text-container { 
+                flex: 0 0 auto; 
+                width: 100%; 
+            } 
+        }
+        
+        .step-title { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: clamp(2rem, 5vw, 4rem); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: -0.02em; 
+            line-height: 1.1; 
+            color: #ffffff; 
+            margin: 0;
+        }
+        
+        .step-description { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: clamp(1rem, 1.8vw, 1.25rem); 
+            line-height: 1.6; 
+            color: #8b92a8; 
+        }
+        
+        .cta-button { 
+            display: inline-block; 
+            margin-top: 1rem; 
+            padding: 1rem 2.5rem; 
+            background: transparent; 
+            border: 2px solid #4a9eff; 
+            color: #4a9eff; 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 700; 
+            font-size: 0.875rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+        }
+        .cta-button:hover { 
+            background: #4a9eff; 
+            color: #0a0e17; 
+            box-shadow: 0 0 30px rgba(74, 158, 255, 0.4); 
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+            color: #8b92a8;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover { color: #4a9eff; }
+        @media (max-width: 768px) {
+            .back-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Workflow Background - Fixed on Left -->
+    <div class="workflow-bg">
+        <canvas id="workflowCanvas"></canvas>
+    </div>
+
+    <a href="index.html" class="back-link">&larr; BACK</a>
+    <a href="mailto:contact@aempresa.com" class="contact-btn-top">CONTACT US</a>
+
+    <!-- Step 1: AI ONBOARDING -->
+    <section class="pipeline-step">
+        <div class="step-content">
+            <div class="number-container"><div class="number-frame">01</div></div>
+            <div class="text-container">
+                <h2 class="step-title">AI ONBOARDING</h2>
+                <p class="step-description">We audit your chaos. Map the waste. Find the wins. No AI strategy decks. Just a clear battle plan that identifies where AI creates immediate value.</p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">GET STARTED</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: AI TO BUSINESS -->
+    <section class="pipeline-step">
+        <div class="step-content">
+            <div class="number-container"><div class="number-frame">02</div></div>
+            <div class="text-container">
+                <h2 class="step-title">AI TO BUSINESS</h2>
+                <p class="step-description">Embed AI where it hurts. Sales. Operations. Support. Not experiments. Integration that moves needles and transforms how your business operates.</p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">INTEGRATE NOW</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 3: AI TO WORKFLOW -->
+    <section class="pipeline-step">
+        <div class="step-content">
+            <div class="number-container"><div class="number-frame">03</div></div>
+            <div class="text-container">
+                <h2 class="step-title">AI TO WORKFLOW</h2>
+                <p class="step-description">Automate the robot work. Free your humans for human stuff. Agents that never sleep. Workflows that scale without adding headcount.</p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">AUTOMATE</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 4: AI TO RESULT -->
+    <section class="pipeline-step">
+        <div class="step-content">
+            <div class="number-container"><div class="number-frame">04</div></div>
+            <div class="text-container">
+                <h2 class="step-title">AI TO RESULT</h2>
+                <p class="step-description">The only metric that matters: Did it make you money? Hours saved. Revenue up. Costs down. Proof, not promises. Measurable ROI.</p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">SEE RESULTS</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const canvas = document.getElementById('workflowCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Canvas setup
+        let canvasWidth = window.innerWidth * 0.4;
+        let canvasHeight = window.innerHeight;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        
+        // Single connected workflow chart
+        // onboarding -> embeddings -> tokens - rag -> chat
+        // workflow -> prompt - commands -> agents -> skills - instructions
+        // llm.txt -> openclaw - browserless - foundry -> langchain - entireio -> agentmail.to -> etc
+        
+        const nodes = [
+            // Level 0
+            { id: 'onboarding', label: 'onboarding', x: 0.5, y: 0.06, level: 0, approach: 'data' },
+            // Level 1
+            { id: 'embeddings', label: 'embeddings', x: 0.5, y: 0.14, level: 1, approach: 'data' },
+            // Level 2
+            { id: 'tokens', label: 'tokens', x: 0.35, y: 0.22, level: 2, approach: 'data' },
+            { id: 'rag', label: 'rag', x: 0.65, y: 0.22, level: 2, approach: 'data' },
+            // Level 3
+            { id: 'chat', label: 'chat', x: 0.65, y: 0.30, level: 3, approach: 'data' },
+            { id: 'workflow', label: 'workflow', x: 0.35, y: 0.30, level: 3, approach: 'logic' },
+            // Level 4
+            { id: 'prompt', label: 'prompt', x: 0.25, y: 0.38, level: 4, approach: 'logic' },
+            { id: 'commands', label: 'commands', x: 0.45, y: 0.38, level: 4, approach: 'logic' },
+            // Level 5
+            { id: 'agents', label: 'agents', x: 0.35, y: 0.46, level: 5, approach: 'logic' },
+            // Level 6
+            { id: 'skills', label: 'skills', x: 0.25, y: 0.54, level: 6, approach: 'logic' },
+            { id: 'instructions', label: 'instructions', x: 0.45, y: 0.54, level: 6, approach: 'logic' },
+            // Level 7 - Integration layer
+            { id: 'llm.txt', label: 'llm.txt', x: 0.15, y: 0.62, level: 7, approach: 'integration' },
+            { id: 'openclaw', label: 'openclaw', x: 0.35, y: 0.62, level: 7, approach: 'integration' },
+            { id: 'browserless', label: 'browserless', x: 0.55, y: 0.62, level: 7, approach: 'integration' },
+            // Level 8
+            { id: 'foundry', label: 'foundry', x: 0.25, y: 0.70, level: 8, approach: 'integration' },
+            { id: 'langchain', label: 'langchain', x: 0.45, y: 0.70, level: 8, approach: 'integration' },
+            { id: 'entireio', label: 'entire.io', x: 0.65, y: 0.70, level: 8, approach: 'integration' },
+            // Level 9
+            { id: 'agentmail', label: 'agentmail.to', x: 0.55, y: 0.78, level: 9, approach: 'integration' },
+            // Level 10
+            { id: 'etc', label: '...', x: 0.55, y: 0.86, level: 10, approach: 'integration' }
+        ];
+        
+        // Approach colors
+        const approachColors = {
+            data: '#4a9eff',        // Blue
+            logic: '#00d9ff',       // Cyan  
+            integration: '#7ee787'  // Green
+        };
+        
+        // Connections: -> means vertical (parent-child), - means horizontal (sibling)
+        const connections = [
+            // onboarding -> embeddings -> tokens
+            { from: 'onboarding', to: 'embeddings', type: 'vertical' },
+            { from: 'embeddings', to: 'tokens', type: 'vertical' },
+            // tokens - rag (siblings)
+            { from: 'tokens', to: 'rag', type: 'horizontal' },
+            // rag -> chat
+            { from: 'rag', to: 'chat', type: 'vertical' },
+            // tokens -> workflow (bridge)
+            { from: 'tokens', to: 'workflow', type: 'vertical' },
+            // workflow -> prompt - commands
+            { from: 'workflow', to: 'prompt', type: 'vertical' },
+            { from: 'prompt', to: 'commands', type: 'horizontal' },
+            // commands -> agents
+            { from: 'commands', to: 'agents', type: 'vertical' },
+            // agents -> skills - instructions
+            { from: 'agents', to: 'skills', type: 'vertical' },
+            { from: 'skills', to: 'instructions', type: 'horizontal' },
+            // skills -> llm.txt (bridge to integration layer)
+            { from: 'skills', to: 'llm.txt', type: 'vertical' },
+            // llm.txt -> openclaw - browserless
+            { from: 'llm.txt', to: 'openclaw', type: 'vertical' },
+            { from: 'openclaw', to: 'browserless', type: 'horizontal' },
+            // openclaw -> foundry, browserless -> langchain
+            { from: 'openclaw', to: 'foundry', type: 'vertical' },
+            { from: 'browserless', to: 'langchain', type: 'vertical' },
+            // langchain - entireio
+            { from: 'langchain', to: 'entireio', type: 'horizontal' },
+            // entireio -> agentmail.to
+            { from: 'entireio', to: 'agentmail', type: 'vertical' },
+            // agentmail.to -> etc
+            { from: 'agentmail', to: 'etc', type: 'vertical' }
+        ];
+        
+        // Calculate absolute positions
+        let allNodes = [];
+        
+        function calculatePositions() {
+            allNodes = nodes.map(node => ({
+                ...node,
+                absX: node.x * canvasWidth,
+                absY: node.y * canvasHeight,
+                color: approachColors[node.approach]
+            }));
+        }
+        
+        // Particle that travels through the chart
+        let particle = {
+            path: [],
+            currentIndex: 0,
+            progress: 0,
+            speed: 0.015,
+            x: 0,
+            y: 0,
+            trail: []
+        };
+        
+        function buildPath() {
+            // Create a continuous path through the chart
+            // onboarding -> embeddings -> tokens -> rag -> chat
+            // tokens -> workflow -> prompt -> commands -> agents -> skills -> llm.txt
+            // llm.txt -> openclaw -> foundry
+            // openclaw -> browserless -> langchain -> entireio -> agentmail.to -> etc
+            
+            const pathIds = [
+                'onboarding', 'embeddings', 'tokens', 'rag', 'chat',  // data path
+                'tokens', 'workflow', 'prompt', 'commands', 'agents', 'skills', 'llm.txt',  // logic path
+                'llm.txt', 'openclaw', 'foundry',  // integration branch 1
+                'openclaw', 'browserless', 'langchain', 'entireio', 'agentmail', 'etc'  // integration branch 2
+            ];
+            
+            particle.path = pathIds.map(id => allNodes.find(n => n.id === id));
+            particle.currentIndex = 0;
+            particle.x = particle.path[0].absX;
+            particle.y = particle.path[0].absY;
+        }
+        
+        function resize() {
+            canvasWidth = window.innerWidth * 0.4;
+            canvasHeight = window.innerHeight;
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            
+            calculatePositions();
+            buildPath();
+        }
+        
+        function getNodeById(id) {
+            return allNodes.find(n => n.id === id);
+        }
+        
+        function drawNode(node) {
+            const nodeWidth = 80;
+            const nodeHeight = 24;
+            
+            // Node background
+            ctx.fillStyle = 'rgba(10, 14, 23, 0.9)';
+            ctx.fillRect(node.absX - nodeWidth/2, node.absY - nodeHeight/2, nodeWidth, nodeHeight);
+            
+            // Node border with approach color
+            ctx.strokeStyle = node.color + '60';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(node.absX - nodeWidth/2, node.absY - nodeHeight/2, nodeWidth, nodeHeight);
+            
+            // Label
+            ctx.font = '9px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = node.color;
+            ctx.fillText(node.label, node.absX, node.absY + 3);
+        }
+        
+        function drawConnection(conn) {
+            const fromNode = getNodeById(conn.from);
+            const toNode = getNodeById(conn.to);
+            
+            ctx.beginPath();
+            
+            if (conn.type === 'vertical') {
+                // Vertical connection (parent-child)
+                ctx.moveTo(fromNode.absX, fromNode.absY + 12);
+                ctx.lineTo(toNode.absX, toNode.absY - 12);
+            } else {
+                // Horizontal connection (sibling)
+                ctx.moveTo(fromNode.absX + 40, fromNode.absY);
+                ctx.lineTo(toNode.absX - 40, toNode.absY);
+            }
+            
+            ctx.strokeStyle = fromNode.color + '40';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            // Animated flow
+            const time = Date.now() / 1000;
+            const dashOffset = -time * 8;
+            ctx.setLineDash([4, 8]);
+            ctx.lineDashOffset = dashOffset;
+            ctx.strokeStyle = fromNode.color + '60';
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        
+        function updateParticle() {
+            if (particle.currentIndex < particle.path.length - 1) {
+                const current = particle.path[particle.currentIndex];
+                const next = particle.path[particle.currentIndex + 1];
+                
+                particle.progress += particle.speed;
+                
+                if (particle.progress >= 1) {
+                    particle.currentIndex++;
+                    particle.progress = 0;
+                    
+                    if (particle.currentIndex >= particle.path.length - 1) {
+                        // Reset to start
+                        particle.currentIndex = 0;
+                        particle.x = particle.path[0].absX;
+                        particle.y = particle.path[0].absY;
+                    }
+                } else {
+                    // Interpolate
+                    const t = particle.progress;
+                    particle.x = current.absX * (1-t) + next.absX * t;
+                    particle.y = current.absY * (1-t) + next.absY * t;
+                }
+            }
+            
+            // Add to trail
+            particle.trail.push({ x: particle.x, y: particle.y, age: 0, color: particle.path[particle.currentIndex]?.color || '#4a9eff' });
+            particle.trail = particle.trail.filter(p => {
+                p.age++;
+                return p.age < 12;
+            });
+        }
+        
+        function drawParticle() {
+            // Draw trail with color transition
+            particle.trail.forEach((p, i) => {
+                const alpha = (1 - p.age / 12) * 0.5;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, (1 - p.age / 12) * 4, 0, Math.PI * 2);
+                ctx.fillStyle = p.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                ctx.fill();
+            });
+            
+            // Get current approach color
+            const currentColor = particle.path[particle.currentIndex]?.color || '#4a9eff';
+            
+            // Draw main particle with glow
+            ctx.save();
+            ctx.shadowColor = currentColor;
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = currentColor;
+            ctx.fill();
+            
+            ctx.shadowBlur = 5;
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.restore();
+        }
+        
+        function drawGrid() {
+            const gridSize = 50;
+            ctx.strokeStyle = 'rgba(74, 158, 255, 0.02)';
+            ctx.lineWidth = 1;
+            
+            for (let x = 0; x <= canvasWidth; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvasHeight);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y <= canvasHeight; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvasWidth, y);
+                ctx.stroke();
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            
+            drawGrid();
+            
+            // Draw connections
+            connections.forEach(drawConnection);
+            
+            // Draw nodes
+            allNodes.forEach(drawNode);
+            
+            // Update and draw particle
+            updateParticle();
+            drawParticle();
+            
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', resize);
+        
+        // Initialize
+        resize();
+        animate();
+    </script>
+</body>
+</html>

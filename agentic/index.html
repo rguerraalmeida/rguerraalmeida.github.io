@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pipeline Templates | A Empresa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; padding: 2rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; padding: 3rem 0; border-bottom: 1px solid #333; margin-bottom: 3rem; }
+        h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+        .template-card { background: #1a1a1a; border-radius: 8px; overflow: hidden; transition: transform 0.3s; border: 1px solid #333; }
+        .template-card:hover { transform: translateY(-5px); }
+        .preview-box { height: 200px; position: relative; }
+        .preview-1 { background: #0a0a0a; background-image: linear-gradient(rgba(0,255,255,0.1) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,0.1) 1px,transparent 1px); background-size: 30px 30px; }
+        .preview-2 { background: linear-gradient(135deg,#667eea,#764ba2,#f093fb); }
+        .preview-3 { background: #0d1117; font-family: monospace; color: rgba(0,255,0,0.1); font-size: 8px; padding: 10px; }
+        .preview-6 { background: linear-gradient(135deg, #0a0e17 0%, #1a2332 100%); position: relative; }
+        .preview-6::before { content: '01'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; border: 3px solid #4a9eff; color: #4a9eff; font-family: monospace; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .preview-7 { background: linear-gradient(135deg, #0a0e17 0%, #1a2332 100%); position: relative; }
+        .preview-7::before { content: '01'; position: absolute; top: 30%; left: 20%; width: 60px; height: 60px; border: 3px solid #4a9eff; color: #4a9eff; font-family: monospace; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .preview-7::after { content: 'AI ONBOARDING'; position: absolute; top: 35%; left: 45%; color: #fff; font-family: sans-serif; font-size: 14px; font-weight: bold; }
+        .preview-8 { background: #0a0e17; position: relative; }
+        .preview-8::before { content: '[RAG] [VECTORS]'; position: absolute; top: 20%; left: 10%; color: #00d9ff; font-family: monospace; font-size: 12px; border: 1px solid #00d9ff; padding: 5px; animation: float 3s ease-in-out infinite; }
+        .preview-8::after { content: '[AGENTS]'; position: absolute; top: 50%; left: 60%; color: #51cf66; font-family: monospace; font-size: 14px; border: 2px solid #51cf66; padding: 8px; animation: float 3s ease-in-out infinite 1s; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .preview-9 { background: #0a0e17; position: relative; overflow: hidden; }
+        .preview-9::before { content: '[RAG] [VECTORS] [EMBEDDINGS] [CHUNKING]'; position: absolute; top: -10%; left: 0; color: #00d9ff; font-family: monospace; font-size: 10px; opacity: 0.3; white-space: nowrap; animation: scrollMatrix 8s linear infinite; }
+        .preview-9::after { content: '[AGENTS] [SKILLS] [TOOLS] [MEMORY]'; position: absolute; top: 30%; left: 0; color: #51cf66; font-family: monospace; font-size: 10px; opacity: 0.3; white-space: nowrap; animation: scrollMatrix 10s linear infinite reverse; }
+        @keyframes scrollMatrix { 0% { transform: translateY(0); } 100% { transform: translateY(-100px); } }
+        .preview-10 { background: #0a0e17; position: relative; overflow: hidden; }
+        .preview-10::before { content: ''; position: absolute; top: 50%; left: 20%; width: 40px; height: 20px; border: 2px solid #4a9eff; transform: translateY(-50%); }
+        .preview-10::after { content: '●'; position: absolute; top: 50%; left: 20%; color: #4a9eff; font-size: 20px; transform: translate(-50%, -50%); animation: flowLight 3s ease-in-out infinite; }
+        @keyframes flowLight { 0%, 100% { left: 20%; } 50% { left: 80%; } }
+        .card-content { padding: 1.5rem; }
+        .view-btn { display: inline-block; padding: 0.75rem 1.5rem; background: transparent; border: 2px solid #fff; color: #fff; text-decoration: none; font-weight: 600; }
+        @media (max-width: 768px) { .template-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header><h1>AI Pipeline Templates</h1><p>Choose your visual style</p></header>
+        <div class="template-grid">
+            <div class="template-card"><div class="preview-box preview-1"></div><div class="card-content"><h2>Cyberpunk Grid</h2><a href="template1.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-2"></div><div class="card-content"><h2>Liquid Gradient</h2><a href="template2.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-3">def audit(): return results</div><div class="card-content"><h2>Code Matrix</h2><a href="template3.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box" style="background:#1a1a1a"></div><div class="card-content"><h2>Brutalist Shapes</h2><a href="template4.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box" style="background:#000"></div><div class="card-content"><h2>Particle Field</h2><a href="template5.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-6"></div><div class="card-content"><h2>Professional Grid</h2><a href="template6.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-7"></div><div class="card-content"><h2>Split Layout</h2><a href="template7.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-8"></div><div class="card-content"><h2>AI Concepts Flow</h2><a href="template8.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-9"></div><div class="card-content"><h2>AI Matrix Scroll</h2><a href="template9.html" class="view-btn">View Demo</a></div></div>
+            <div class="template-card"><div class="preview-box preview-10"></div><div class="card-content"><h2>Workflow Flow</h2><a href="template10.html" class="view-btn">View Demo</a></div></div>
+        </div>
+        <footer style="text-align:center;padding:2rem;border-top:1px solid #333"><a href="../index.html">Back to Main Site</a></footer>
+    </div>
+</body>
+</html>

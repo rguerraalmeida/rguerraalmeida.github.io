@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template 8 - AI Concepts Matrix | A Empresa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+            background: #0a0e17;
+            color: #e8eaed;
+        }
+
+        /* Fixed Contact Button - Top Right */
+        .contact-btn-top {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            padding: 0.875rem 2rem;
+            background: transparent;
+            border: 2px solid #4a9eff;
+            color: #4a9eff;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .contact-btn-top:hover {
+            background: #4a9eff;
+            color: #0a0e17;
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .contact-btn-top {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.625rem 1.25rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Matrix-style Background - Unselectable, Faded, Scrolling */
+        .concepts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+            opacity: 0.08;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            line-height: 2;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .concepts-scroll {
+            animation: scrollUp 25s linear infinite;
+            white-space: pre;
+            color: #4a9eff;
+        }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+
+        /* Pipeline Sections */
+        .pipeline-step {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 6rem 4rem;
+            overflow: hidden;
+        }
+
+        /* Gradient Backgrounds */
+        .step1 { background: linear-gradient(135deg, #0a0e17 0%, #1a2332 50%, #0f1419 100%); }
+        .step2 { background: linear-gradient(135deg, #0f1419 0%, #1e2a3a 50%, #151b24 100%); }
+        .step3 { background: linear-gradient(135deg, #151b24 0%, #243447 50%, #1a2332 100%); }
+        .step4 { background: linear-gradient(135deg, #1a2332 0%, #2d3e50 50%, #0a0e17 100%); }
+
+        /* Step Content Layout */
+        .step-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4rem;
+            z-index: 10;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .step-content {
+                flex-direction: column;
+                gap: 2rem;
+                padding: 0 1rem;
+            }
+            
+            .pipeline-step {
+                padding: 4rem 1.5rem;
+            }
+        }
+
+        /* Number Container */
+        .number-container {
+            flex: 0 0 35%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 768px) {
+            .number-container {
+                flex: 0 0 auto;
+            }
+        }
+
+        /* Number Frame */
+        .number-frame {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(120px, 15vw, 200px);
+            height: clamp(120px, 15vw, 200px);
+            border: 4px solid #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(3rem, 5vw, 6rem);
+            font-weight: 800;
+            color: #4a9eff;
+            letter-spacing: -0.05em;
+        }
+
+        @media (max-width: 768px) {
+            .number-frame {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+                border-width: 3px;
+            }
+        }
+
+        /* Text Container */
+        .text-container {
+            flex: 0 0 65%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .text-container {
+                flex: 0 0 auto;
+                width: 100%;
+            }
+        }
+
+        /* Step Title */
+        .step-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* Step Description */
+        .step-description {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1rem, 1.8vw, 1.25rem);
+            line-height: 1.6;
+            color: #8b92a8;
+            max-width: 100%;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 2px solid #4a9eff;
+            color: #4a9eff;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: fit-content;
+        }
+
+        .cta-button:hover {
+            background: #4a9eff;
+            color: #0a0e17;
+            box-shadow: 0 0 30px rgba(74, 158, 255, 0.4);
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+            color: #8b92a8;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #4a9eff;
+        }
+
+        @media (max-width: 768px) {
+            .back-link {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix-style Scrolling Concepts Background -->
+    <div class="concepts-bg">
+        <div class="concepts-scroll">[RAG]    [VECTORS]    [EMBEDDINGS]    [CHUNKING]    [PROMPTS]    [CONTEXT]
+         [KNOWLEDGE_BASE]    [SEMANTIC_SEARCH]    [VECTOR_DB]    [LLM]
+    [RETRIEVAL]    [AUGMENTED]    [GENERATION]    [TOKENS]    [PARAMETERS]
+[AGENTS]    [SKILLS]    [INSTRUCTIONS]    [TOOLS]    [MEMORY]    [ORCHESTRATION]
+         [WORKFLOWS]    [AUTOMATION]    [TASKS]    [FUNCTION_CALLING]
+    [A2A]    [LLM.TXT]    [MCP]    [APIs]    [INTEGRATION]    [FRAMEWORKS]
+         [KNOWLEDGE_GRAPH]    [SEMANTIC_LAYER]    [CONTEXT_WINDOW]
+[TIME]    [REVENUE]    [ROI]    [AUTOMATION]    [SCALE]    [PROFIT]
+         [EFFICIENCY]    [PRODUCTIVITY]    [GROWTH]    [METRICS]
+    [RAG]    [VECTORS]    [EMBEDDINGS]    [CHUNKING]    [PROMPTS]    [CONTEXT]
+         [KNOWLEDGE_BASE]    [SEMANTIC_SEARCH]    [VECTOR_DB]    [LLM]
+    [RETRIEVAL]    [AUGMENTED]    [GENERATION]    [TOKENS]    [PARAMETERS]
+[AGENTS]    [SKILLS]    [INSTRUCTIONS]    [TOOLS]    [MEMORY]    [ORCHESTRATION]
+         [WORKFLOWS]    [AUTOMATION]    [TASKS]    [FUNCTION_CALLING]
+    [A2A]    [LLM.TXT]    [MCP]    [APIs]    [INTEGRATION]    [FRAMEWORKS]
+         [KNOWLEDGE_GRAPH]    [SEMANTIC_LAYER]    [CONTEXT_WINDOW]
+[TIME]    [REVENUE]    [ROI]    [AUTOMATION]    [SCALE]    [PROFIT]
+         [EFFICIENCY]    [PRODUCTIVITY]    [GROWTH]    [METRICS]</div>
+    </div>
+
+    <!-- Back Link -->
+    <a href="index.html" class="back-link">&larr; BACK</a>
+
+    <!-- Fixed Contact Button - Top Right -->
+    <a href="mailto:contact@aempresa.com" class="contact-btn-top">CONTACT US</a>
+
+    <!-- Step 1: AI ONBOARDING -->
+    <section class="pipeline-step step1">
+        <div class="step-content">
+            <div class="number-container">
+                <div class="number-frame">01</div>
+            </div>
+            <div class="text-container">
+                <h2 class="step-title">AI ONBOARDING</h2>
+                <p class="step-description">
+                    We build your knowledge foundation. RAG systems, vector databases, and smart embeddings that make AI understand your business. No black boxes.
+                </p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">GET STARTED</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: AI TO BUSINESS -->
+    <section class="pipeline-step step2">
+        <div class="step-content">
+            <div class="number-container">
+                <div class="number-frame">02</div>
+            </div>
+            <div class="text-container">
+                <h2 class="step-title">AI TO BUSINESS</h2>
+                <p class="step-description">
+                    Agent-to-Agent frameworks, llm.txt protocols, and Model Context Protocol. We don't just use AI—we teach AI about your company, expertise, and systems.
+                </p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">INTEGRATE NOW</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 3: AI TO WORKFLOW -->
+    <section class="pipeline-step step3">
+        <div class="step-content">
+            <div class="number-container">
+                <div class="number-frame">03</div>
+            </div>
+            <div class="text-container">
+                <h2 class="step-title">AI TO WORKFLOW</h2>
+                <p class="step-description">
+                    Intelligent agents with specialized skills, clear instructions, and tool access. Memory systems that learn. Orchestration that scales without limits.
+                </p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">AUTOMATE</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 4: AI TO RESULT -->
+    <section class="pipeline-step step4">
+        <div class="step-content">
+            <div class="number-container">
+                <div class="number-frame">04</div>
+            </div>
+            <div class="text-container">
+                <h2 class="step-title">AI TO RESULT</h2>
+                <p class="step-description">
+                    Hours saved become revenue gained. Automation scales to profit. The only metric: did it make you money? Proof, not promises.
+                </p>
+                <a href="mailto:contact@aempresa.com" class="cta-button">SEE RESULTS</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

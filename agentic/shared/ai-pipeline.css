@@ -1,0 +1,197 @@
+/* AI Pipeline - Shared Styles */
+/* Common styles for all 5 templates */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+    background: #000;
+    color: #fff;
+}
+
+/* Pipeline Section Styles */
+.pipeline-step {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.step-content {
+    text-align: center;
+    max-width: 900px;
+    z-index: 10;
+    position: relative;
+}
+
+/* Step Number - Large and outlined */
+.step-number {
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2rem;
+    font-family: 'Courier New', monospace;
+}
+
+.step-number.outlined {
+    -webkit-text-stroke: 2px currentColor;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Step Title */
+.step-title {
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3rem;
+    line-height: 1.1;
+}
+
+/* Step Body Text */
+.step-body {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 2px solid currentColor;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin-top: 2rem;
+}
+
+.cta-button:hover {
+    background: currentColor;
+    color: #000;
+}
+
+/* Top Progress Indicator */
+.top-indicator {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    z-index: 1000;
+    letter-spacing: 0.2em;
+}
+
+/* Navigation Arrows */
+.nav-arrows {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 1000;
+}
+
+.nav-arrow {
+    width: 50px;
+    height: 50px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.nav-arrow:hover {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+/* Back to Gallery Link */
+.back-link {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    z-index: 1000;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.back-link:hover {
+    opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .pipeline-step {
+        padding: 1.5rem;
+    }
+    
+    .step-number {
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-title {
+        margin-bottom: 2rem;
+    }
+    
+    .nav-arrows {
+        right: 1rem;
+    }
+    
+    .nav-arrow {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .top-indicator {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .step-content {
+        max-width: 100%;
+    }
+    
+    .cta-button {
+        padding: 0.8rem 2rem;
+        width: 100%;
+        max-width: 300px;
+    }
+}
